@@ -1,18 +1,17 @@
-import './globals.css'
+import "styles/globals.css";
+import { Toaster } from "@/components/Atoms/Toast";
+import React from "react";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
-      <body>{children}</body>
-    </html>
-  )
-}
+type RootLayoutProps = {
+  children: React.ReactNode;
+};
+
+const RootLayout: React.FC<RootLayoutProps> = ({ children }) => (
+  <html lang="en" className="dark bg-black text-slate-900 antialiased">
+    <head />
+    <body className="min-h-screen">{children}</body>
+    <Toaster position="bottom-right" />
+  </html>
+);
+
+export default RootLayout;
