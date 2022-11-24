@@ -1,12 +1,12 @@
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
-import Link from "next/link";
+import { headers } from 'next/headers';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
 
-import { DashboardNav } from "@/components/Dashboard/DashboardNav";
-import { UserAccountNav } from "@/components/UserAccountNav";
-import { Icons } from "@/components/icons";
-import { getUser } from "@/lib/ServerUtils/getUser";
-import { Header } from "@/components/Organisms/Header";
+import { DashboardNav } from '@/components/Dashboard/DashboardNav';
+import { UserAccountNav } from '@/components/UserAccountNav';
+import { Icons } from '@/components/icons';
+import { getUser } from '@/lib/ServerUtils/getUser';
+import { Header } from '@/components/Organisms/Header';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;

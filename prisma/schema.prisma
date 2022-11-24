@@ -55,6 +55,7 @@ model User {
   sessions Session[]
   projects     Project[]
   posts        Post[]
+  upvotes      Upvote[]
 
   @@map(name: "users")
 }
@@ -91,9 +92,6 @@ model Post {
       id        String   @id @default(cuid())
       title     String
       description String?
-      upvotes Int
-      downvotes Int
-    
 
       createdAt DateTime @default(now()) @map(name: "created_at")
       updatedAt DateTime @default(now()) @map(name: "updated_at")
@@ -104,6 +102,21 @@ model Post {
       project Project @relation(fields: [projectId], references: [id])
 
       images Image[]
+      upvotes Upvote[]
+}
+
+// Upvote model
+model Upvote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @map(name: "updated_at")
+  creatorId  String
+  postId  String
+
+  creator User @relation(fields: [creatorId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([creatorId, postId])
 }
 
 // Image model

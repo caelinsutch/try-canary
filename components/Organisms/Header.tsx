@@ -9,17 +9,25 @@ type HeaderProps = {
   project?: Pick<Project, 'name' | 'logo' | 'id'>;
 };
 
+
 export const Header = ({ user, project }: HeaderProps) => (
-  <header className="flex h-[64px] items-center justify-between pl-2">
+  <header className="flex h-[64px] items-center justify-between">
     {project ? (
-      <Link href={`/project/${project.id}`} className="flex items-center space-x-2">
-				{project.logo ? (
-					<img src={project.logo} alt={project.name} className="h-8 w-8 rounded-full" />
-				) : (
-        <span className="text-lg font-bold dark:text-white text-slate-900">
-          {project.name}
-        </span>
-				)}
+      <Link
+        href={`/project/${project.id}`}
+        className="flex items-center space-x-2"
+      >
+        {project.logo ? (
+          <img
+            src={project.logo}
+            alt={project.name}
+            className="h-8 w-8 rounded-full"
+          />
+        ) : (
+          <span className="text-lg font-bold dark:text-white text-slate-900">
+            {project.name}
+          </span>
+        )}
       </Link>
     ) : (
       <Link href="/" className="flex items-center space-x-2">

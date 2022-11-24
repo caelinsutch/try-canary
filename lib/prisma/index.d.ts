@@ -90,12 +90,22 @@ export type Post = {
   id: string
   title: string
   description: string | null
-  upvotes: number
-  downvotes: number
   createdAt: Date
   updatedAt: Date
   creatorId: string
   projectId: string
+}
+
+/**
+ * Model Upvote
+ * 
+ */
+export type Upvote = {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+  creatorId: string
+  postId: string
 }
 
 /**
@@ -309,6 +319,16 @@ export class PrismaClient<
     * ```
     */
   get post(): Prisma.PostDelegate<GlobalReject>;
+
+  /**
+   * `prisma.upvote`: Exposes CRUD operations for the **Upvote** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Upvotes
+    * const upvotes = await prisma.upvote.findMany()
+    * ```
+    */
+  get upvote(): Prisma.UpvoteDelegate<GlobalReject>;
 
   /**
    * `prisma.image`: Exposes CRUD operations for the **Image** model.
@@ -813,6 +833,7 @@ export namespace Prisma {
     VerificationToken: 'VerificationToken',
     Project: 'Project',
     Post: 'Post',
+    Upvote: 'Upvote',
     Image: 'Image'
   };
 
@@ -982,6 +1003,7 @@ export namespace Prisma {
     sessions: number
     projects: number
     posts: number
+    upvotes: number
   }
 
   export type UserCountOutputTypeSelect = {
@@ -989,6 +1011,7 @@ export namespace Prisma {
     sessions?: boolean
     projects?: boolean
     posts?: boolean
+    upvotes?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<
@@ -1083,10 +1106,12 @@ export namespace Prisma {
 
   export type PostCountOutputType = {
     images: number
+    upvotes: number
   }
 
   export type PostCountOutputTypeSelect = {
     images?: boolean
+    upvotes?: boolean
   }
 
   export type PostCountOutputTypeGetPayload<
@@ -3268,6 +3293,7 @@ export namespace Prisma {
     sessions?: boolean | SessionFindManyArgs
     projects?: boolean | ProjectFindManyArgs
     posts?: boolean | PostFindManyArgs
+    upvotes?: boolean | UpvoteFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -3276,6 +3302,7 @@ export namespace Prisma {
     sessions?: boolean | SessionFindManyArgs
     projects?: boolean | ProjectFindManyArgs
     posts?: boolean | PostFindManyArgs
+    upvotes?: boolean | UpvoteFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -3294,6 +3321,7 @@ export namespace Prisma {
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'posts' ? Array < PostGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'upvotes' ? Array < UpvoteGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
@@ -3303,6 +3331,7 @@ export namespace Prisma {
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'posts' ? Array < PostGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'upvotes' ? Array < UpvoteGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
   } 
     : User
@@ -3685,6 +3714,8 @@ export namespace Prisma {
     projects<T extends ProjectFindManyArgs = {}>(args?: Subset<T, ProjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Project>| Null>, PrismaPromise<Array<ProjectGetPayload<T>>| Null>>;
 
     posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>| Null>, PrismaPromise<Array<PostGetPayload<T>>| Null>>;
+
+    upvotes<T extends UpvoteFindManyArgs = {}>(args?: Subset<T, UpvoteFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Upvote>| Null>, PrismaPromise<Array<UpvoteGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -5858,28 +5889,14 @@ export namespace Prisma {
 
   export type AggregatePost = {
     _count: PostCountAggregateOutputType | null
-    _avg: PostAvgAggregateOutputType | null
-    _sum: PostSumAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
-  }
-
-  export type PostAvgAggregateOutputType = {
-    upvotes: number | null
-    downvotes: number | null
-  }
-
-  export type PostSumAggregateOutputType = {
-    upvotes: number | null
-    downvotes: number | null
   }
 
   export type PostMinAggregateOutputType = {
     id: string | null
     title: string | null
     description: string | null
-    upvotes: number | null
-    downvotes: number | null
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
@@ -5890,8 +5907,6 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
-    upvotes: number | null
-    downvotes: number | null
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
@@ -5902,8 +5917,6 @@ export namespace Prisma {
     id: number
     title: number
     description: number
-    upvotes: number
-    downvotes: number
     createdAt: number
     updatedAt: number
     creatorId: number
@@ -5912,22 +5925,10 @@ export namespace Prisma {
   }
 
 
-  export type PostAvgAggregateInputType = {
-    upvotes?: true
-    downvotes?: true
-  }
-
-  export type PostSumAggregateInputType = {
-    upvotes?: true
-    downvotes?: true
-  }
-
   export type PostMinAggregateInputType = {
     id?: true
     title?: true
     description?: true
-    upvotes?: true
-    downvotes?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -5938,8 +5939,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    upvotes?: true
-    downvotes?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -5950,8 +5949,6 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
-    upvotes?: true
-    downvotes?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -6002,18 +5999,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: PostAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PostSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: PostMinAggregateInputType
@@ -6044,8 +6029,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: PostCountAggregateInputType | true
-    _avg?: PostAvgAggregateInputType
-    _sum?: PostSumAggregateInputType
     _min?: PostMinAggregateInputType
     _max?: PostMaxAggregateInputType
   }
@@ -6055,15 +6038,11 @@ export namespace Prisma {
     id: string
     title: string
     description: string | null
-    upvotes: number
-    downvotes: number
     createdAt: Date
     updatedAt: Date
     creatorId: string
     projectId: string
     _count: PostCountAggregateOutputType | null
-    _avg: PostAvgAggregateOutputType | null
-    _sum: PostSumAggregateOutputType | null
     _min: PostMinAggregateOutputType | null
     _max: PostMaxAggregateOutputType | null
   }
@@ -6086,8 +6065,6 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
-    upvotes?: boolean
-    downvotes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     creatorId?: boolean
@@ -6095,6 +6072,7 @@ export namespace Prisma {
     creator?: boolean | UserArgs
     project?: boolean | ProjectArgs
     images?: boolean | ImageFindManyArgs
+    upvotes?: boolean | UpvoteFindManyArgs
     _count?: boolean | PostCountOutputTypeArgs
   }
 
@@ -6102,6 +6080,7 @@ export namespace Prisma {
     creator?: boolean | UserArgs
     project?: boolean | ProjectArgs
     images?: boolean | ImageFindManyArgs
+    upvotes?: boolean | UpvoteFindManyArgs
     _count?: boolean | PostCountOutputTypeArgs
   }
 
@@ -6119,6 +6098,7 @@ export namespace Prisma {
         P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
         P extends 'project' ? ProjectGetPayload<Exclude<S['include'], undefined | null>[P]> :
         P extends 'images' ? Array < ImageGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'upvotes' ? Array < UpvoteGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? PostCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
@@ -6127,6 +6107,7 @@ export namespace Prisma {
         P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
         P extends 'project' ? ProjectGetPayload<Exclude<S['select'], undefined | null>[P]> :
         P extends 'images' ? Array < ImageGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'upvotes' ? Array < UpvoteGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? PostCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Post ? Post[P] : never
   } 
     : Post
@@ -6508,6 +6489,8 @@ export namespace Prisma {
 
     images<T extends ImageFindManyArgs = {}>(args?: Subset<T, ImageFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Image>| Null>, PrismaPromise<Array<ImageGetPayload<T>>| Null>>;
 
+    upvotes<T extends UpvoteFindManyArgs = {}>(args?: Subset<T, UpvoteFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Upvote>| Null>, PrismaPromise<Array<UpvoteGetPayload<T>>| Null>>;
+
     private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6858,6 +6841,937 @@ export namespace Prisma {
      * 
     **/
     include?: PostInclude | null
+  }
+
+
+
+  /**
+   * Model Upvote
+   */
+
+
+  export type AggregateUpvote = {
+    _count: UpvoteCountAggregateOutputType | null
+    _min: UpvoteMinAggregateOutputType | null
+    _max: UpvoteMaxAggregateOutputType | null
+  }
+
+  export type UpvoteMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    creatorId: string | null
+    postId: string | null
+  }
+
+  export type UpvoteMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    creatorId: string | null
+    postId: string | null
+  }
+
+  export type UpvoteCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    creatorId: number
+    postId: number
+    _all: number
+  }
+
+
+  export type UpvoteMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    postId?: true
+  }
+
+  export type UpvoteMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    postId?: true
+  }
+
+  export type UpvoteCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    postId?: true
+    _all?: true
+  }
+
+  export type UpvoteAggregateArgs = {
+    /**
+     * Filter which Upvote to aggregate.
+     * 
+    **/
+    where?: UpvoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Upvotes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<UpvoteOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: UpvoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Upvotes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Upvotes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Upvotes
+    **/
+    _count?: true | UpvoteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UpvoteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UpvoteMaxAggregateInputType
+  }
+
+  export type GetUpvoteAggregateType<T extends UpvoteAggregateArgs> = {
+        [P in keyof T & keyof AggregateUpvote]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUpvote[P]>
+      : GetScalarType<T[P], AggregateUpvote[P]>
+  }
+
+
+
+
+  export type UpvoteGroupByArgs = {
+    where?: UpvoteWhereInput
+    orderBy?: Enumerable<UpvoteOrderByWithAggregationInput>
+    by: Array<UpvoteScalarFieldEnum>
+    having?: UpvoteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UpvoteCountAggregateInputType | true
+    _min?: UpvoteMinAggregateInputType
+    _max?: UpvoteMaxAggregateInputType
+  }
+
+
+  export type UpvoteGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    creatorId: string
+    postId: string
+    _count: UpvoteCountAggregateOutputType | null
+    _min: UpvoteMinAggregateOutputType | null
+    _max: UpvoteMaxAggregateOutputType | null
+  }
+
+  type GetUpvoteGroupByPayload<T extends UpvoteGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<UpvoteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UpvoteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UpvoteGroupByOutputType[P]>
+            : GetScalarType<T[P], UpvoteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UpvoteSelect = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    creatorId?: boolean
+    postId?: boolean
+    creator?: boolean | UserArgs
+    post?: boolean | PostArgs
+  }
+
+  export type UpvoteInclude = {
+    creator?: boolean | UserArgs
+    post?: boolean | PostArgs
+  }
+
+  export type UpvoteGetPayload<
+    S extends boolean | null | undefined | UpvoteArgs,
+    U = keyof S
+      > = S extends true
+        ? Upvote
+    : S extends undefined
+    ? never
+    : S extends UpvoteArgs | UpvoteFindManyArgs
+    ?'include' extends U
+    ? Upvote  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'post' ? PostGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'post' ? PostGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Upvote ? Upvote[P] : never
+  } 
+    : Upvote
+  : Upvote
+
+
+  type UpvoteCountArgs = Merge<
+    Omit<UpvoteFindManyArgs, 'select' | 'include'> & {
+      select?: UpvoteCountAggregateInputType | true
+    }
+  >
+
+  export interface UpvoteDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one Upvote that matches the filter.
+     * @param {UpvoteFindUniqueArgs} args - Arguments to find a Upvote
+     * @example
+     * // Get one Upvote
+     * const upvote = await prisma.upvote.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends UpvoteFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, UpvoteFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Upvote'> extends True ? CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>> : CheckSelect<T, Prisma__UpvoteClient<Upvote | null, null>, Prisma__UpvoteClient<UpvoteGetPayload<T> | null, null>>
+
+    /**
+     * Find the first Upvote that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteFindFirstArgs} args - Arguments to find a Upvote
+     * @example
+     * // Get one Upvote
+     * const upvote = await prisma.upvote.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends UpvoteFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, UpvoteFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Upvote'> extends True ? CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>> : CheckSelect<T, Prisma__UpvoteClient<Upvote | null, null>, Prisma__UpvoteClient<UpvoteGetPayload<T> | null, null>>
+
+    /**
+     * Find zero or more Upvotes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Upvotes
+     * const upvotes = await prisma.upvote.findMany()
+     * 
+     * // Get first 10 Upvotes
+     * const upvotes = await prisma.upvote.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const upvoteWithIdOnly = await prisma.upvote.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends UpvoteFindManyArgs>(
+      args?: SelectSubset<T, UpvoteFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Upvote>>, PrismaPromise<Array<UpvoteGetPayload<T>>>>
+
+    /**
+     * Create a Upvote.
+     * @param {UpvoteCreateArgs} args - Arguments to create a Upvote.
+     * @example
+     * // Create one Upvote
+     * const Upvote = await prisma.upvote.create({
+     *   data: {
+     *     // ... data to create a Upvote
+     *   }
+     * })
+     * 
+    **/
+    create<T extends UpvoteCreateArgs>(
+      args: SelectSubset<T, UpvoteCreateArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Create many Upvotes.
+     *     @param {UpvoteCreateManyArgs} args - Arguments to create many Upvotes.
+     *     @example
+     *     // Create many Upvotes
+     *     const upvote = await prisma.upvote.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends UpvoteCreateManyArgs>(
+      args?: SelectSubset<T, UpvoteCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Upvote.
+     * @param {UpvoteDeleteArgs} args - Arguments to delete one Upvote.
+     * @example
+     * // Delete one Upvote
+     * const Upvote = await prisma.upvote.delete({
+     *   where: {
+     *     // ... filter to delete one Upvote
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends UpvoteDeleteArgs>(
+      args: SelectSubset<T, UpvoteDeleteArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Update one Upvote.
+     * @param {UpvoteUpdateArgs} args - Arguments to update one Upvote.
+     * @example
+     * // Update one Upvote
+     * const upvote = await prisma.upvote.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends UpvoteUpdateArgs>(
+      args: SelectSubset<T, UpvoteUpdateArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Delete zero or more Upvotes.
+     * @param {UpvoteDeleteManyArgs} args - Arguments to filter Upvotes to delete.
+     * @example
+     * // Delete a few Upvotes
+     * const { count } = await prisma.upvote.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends UpvoteDeleteManyArgs>(
+      args?: SelectSubset<T, UpvoteDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Upvotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Upvotes
+     * const upvote = await prisma.upvote.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends UpvoteUpdateManyArgs>(
+      args: SelectSubset<T, UpvoteUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Upvote.
+     * @param {UpvoteUpsertArgs} args - Arguments to update or create a Upvote.
+     * @example
+     * // Update or create a Upvote
+     * const upvote = await prisma.upvote.upsert({
+     *   create: {
+     *     // ... data to create a Upvote
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Upvote we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends UpvoteUpsertArgs>(
+      args: SelectSubset<T, UpvoteUpsertArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Find one Upvote that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {UpvoteFindUniqueOrThrowArgs} args - Arguments to find a Upvote
+     * @example
+     * // Get one Upvote
+     * const upvote = await prisma.upvote.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends UpvoteFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, UpvoteFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Find the first Upvote that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteFindFirstOrThrowArgs} args - Arguments to find a Upvote
+     * @example
+     * // Get one Upvote
+     * const upvote = await prisma.upvote.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends UpvoteFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, UpvoteFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__UpvoteClient<Upvote>, Prisma__UpvoteClient<UpvoteGetPayload<T>>>
+
+    /**
+     * Count the number of Upvotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteCountArgs} args - Arguments to filter Upvotes to count.
+     * @example
+     * // Count the number of Upvotes
+     * const count = await prisma.upvote.count({
+     *   where: {
+     *     // ... the filter for the Upvotes we want to count
+     *   }
+     * })
+    **/
+    count<T extends UpvoteCountArgs>(
+      args?: Subset<T, UpvoteCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UpvoteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Upvote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UpvoteAggregateArgs>(args: Subset<T, UpvoteAggregateArgs>): PrismaPromise<GetUpvoteAggregateType<T>>
+
+    /**
+     * Group by Upvote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UpvoteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UpvoteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UpvoteGroupByArgs['orderBy'] }
+        : { orderBy?: UpvoteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UpvoteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUpvoteGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Upvote.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__UpvoteClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    creator<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+
+    post<T extends PostArgs = {}>(args?: Subset<T, PostArgs>): CheckSelect<T, Prisma__PostClient<Post | Null>, Prisma__PostClient<PostGetPayload<T> | Null>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Upvote base type for findUnique actions
+   */
+  export type UpvoteFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * Filter, which Upvote to fetch.
+     * 
+    **/
+    where: UpvoteWhereUniqueInput
+  }
+
+  /**
+   * Upvote: findUnique
+   */
+  export interface UpvoteFindUniqueArgs extends UpvoteFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Upvote base type for findFirst actions
+   */
+  export type UpvoteFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * Filter, which Upvote to fetch.
+     * 
+    **/
+    where?: UpvoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Upvotes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<UpvoteOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Upvotes.
+     * 
+    **/
+    cursor?: UpvoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Upvotes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Upvotes.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Upvotes.
+     * 
+    **/
+    distinct?: Enumerable<UpvoteScalarFieldEnum>
+  }
+
+  /**
+   * Upvote: findFirst
+   */
+  export interface UpvoteFindFirstArgs extends UpvoteFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Upvote findMany
+   */
+  export type UpvoteFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * Filter, which Upvotes to fetch.
+     * 
+    **/
+    where?: UpvoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Upvotes to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<UpvoteOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Upvotes.
+     * 
+    **/
+    cursor?: UpvoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Upvotes from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Upvotes.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<UpvoteScalarFieldEnum>
+  }
+
+
+  /**
+   * Upvote create
+   */
+  export type UpvoteCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * The data needed to create a Upvote.
+     * 
+    **/
+    data: XOR<UpvoteCreateInput, UpvoteUncheckedCreateInput>
+  }
+
+
+  /**
+   * Upvote createMany
+   */
+  export type UpvoteCreateManyArgs = {
+    /**
+     * The data used to create many Upvotes.
+     * 
+    **/
+    data: Enumerable<UpvoteCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Upvote update
+   */
+  export type UpvoteUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * The data needed to update a Upvote.
+     * 
+    **/
+    data: XOR<UpvoteUpdateInput, UpvoteUncheckedUpdateInput>
+    /**
+     * Choose, which Upvote to update.
+     * 
+    **/
+    where: UpvoteWhereUniqueInput
+  }
+
+
+  /**
+   * Upvote updateMany
+   */
+  export type UpvoteUpdateManyArgs = {
+    /**
+     * The data used to update Upvotes.
+     * 
+    **/
+    data: XOR<UpvoteUpdateManyMutationInput, UpvoteUncheckedUpdateManyInput>
+    /**
+     * Filter which Upvotes to update
+     * 
+    **/
+    where?: UpvoteWhereInput
+  }
+
+
+  /**
+   * Upvote upsert
+   */
+  export type UpvoteUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * The filter to search for the Upvote to update in case it exists.
+     * 
+    **/
+    where: UpvoteWhereUniqueInput
+    /**
+     * In case the Upvote found by the `where` argument doesn't exist, create a new Upvote with this data.
+     * 
+    **/
+    create: XOR<UpvoteCreateInput, UpvoteUncheckedCreateInput>
+    /**
+     * In case the Upvote was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<UpvoteUpdateInput, UpvoteUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Upvote delete
+   */
+  export type UpvoteDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
+    /**
+     * Filter which Upvote to delete.
+     * 
+    **/
+    where: UpvoteWhereUniqueInput
+  }
+
+
+  /**
+   * Upvote deleteMany
+   */
+  export type UpvoteDeleteManyArgs = {
+    /**
+     * Filter which Upvotes to delete
+     * 
+    **/
+    where?: UpvoteWhereInput
+  }
+
+
+  /**
+   * Upvote: findUniqueOrThrow
+   */
+  export type UpvoteFindUniqueOrThrowArgs = UpvoteFindUniqueArgsBase
+      
+
+  /**
+   * Upvote: findFirstOrThrow
+   */
+  export type UpvoteFindFirstOrThrowArgs = UpvoteFindFirstArgsBase
+      
+
+  /**
+   * Upvote without action
+   */
+  export type UpvoteArgs = {
+    /**
+     * Select specific fields to fetch from the Upvote
+     * 
+    **/
+    select?: UpvoteSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UpvoteInclude | null
   }
 
 
@@ -7820,8 +8734,6 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     description: 'description',
-    upvotes: 'upvotes',
-    downvotes: 'downvotes',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     creatorId: 'creatorId',
@@ -7870,6 +8782,17 @@ export namespace Prisma {
   };
 
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+  export const UpvoteScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    creatorId: 'creatorId',
+    postId: 'postId'
+  };
+
+  export type UpvoteScalarFieldEnum = (typeof UpvoteScalarFieldEnum)[keyof typeof UpvoteScalarFieldEnum]
 
 
   export const UserScalarFieldEnum: {
@@ -8044,6 +8967,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     projects?: ProjectListRelationFilter
     posts?: PostListRelationFilter
+    upvotes?: UpvoteListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8058,6 +8982,7 @@ export namespace Prisma {
     sessions?: SessionOrderByRelationAggregateInput
     projects?: ProjectOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
+    upvotes?: UpvoteOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -8193,8 +9118,6 @@ export namespace Prisma {
     id?: StringFilter | string
     title?: StringFilter | string
     description?: StringNullableFilter | string | null
-    upvotes?: IntFilter | number
-    downvotes?: IntFilter | number
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
@@ -8202,14 +9125,13 @@ export namespace Prisma {
     creator?: XOR<UserRelationFilter, UserWhereInput>
     project?: XOR<ProjectRelationFilter, ProjectWhereInput>
     images?: ImageListRelationFilter
+    upvotes?: UpvoteListRelationFilter
   }
 
   export type PostOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    upvotes?: SortOrder
-    downvotes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
@@ -8217,6 +9139,7 @@ export namespace Prisma {
     creator?: UserOrderByWithRelationInput
     project?: ProjectOrderByWithRelationInput
     images?: ImageOrderByRelationAggregateInput
+    upvotes?: UpvoteOrderByRelationAggregateInput
   }
 
   export type PostWhereUniqueInput = {
@@ -8227,17 +9150,13 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    upvotes?: SortOrder
-    downvotes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
     projectId?: SortOrder
     _count?: PostCountOrderByAggregateInput
-    _avg?: PostAvgOrderByAggregateInput
     _max?: PostMaxOrderByAggregateInput
     _min?: PostMinOrderByAggregateInput
-    _sum?: PostSumOrderByAggregateInput
   }
 
   export type PostScalarWhereWithAggregatesInput = {
@@ -8247,12 +9166,60 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter | string
     title?: StringWithAggregatesFilter | string
     description?: StringNullableWithAggregatesFilter | string | null
-    upvotes?: IntWithAggregatesFilter | number
-    downvotes?: IntWithAggregatesFilter | number
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
     creatorId?: StringWithAggregatesFilter | string
     projectId?: StringWithAggregatesFilter | string
+  }
+
+  export type UpvoteWhereInput = {
+    AND?: Enumerable<UpvoteWhereInput>
+    OR?: Enumerable<UpvoteWhereInput>
+    NOT?: Enumerable<UpvoteWhereInput>
+    id?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    creatorId?: StringFilter | string
+    postId?: StringFilter | string
+    creator?: XOR<UserRelationFilter, UserWhereInput>
+    post?: XOR<PostRelationFilter, PostWhereInput>
+  }
+
+  export type UpvoteOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    postId?: SortOrder
+    creator?: UserOrderByWithRelationInput
+    post?: PostOrderByWithRelationInput
+  }
+
+  export type UpvoteWhereUniqueInput = {
+    id?: string
+    creatorId_postId?: UpvoteCreatorIdPostIdCompoundUniqueInput
+  }
+
+  export type UpvoteOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    postId?: SortOrder
+    _count?: UpvoteCountOrderByAggregateInput
+    _max?: UpvoteMaxOrderByAggregateInput
+    _min?: UpvoteMinOrderByAggregateInput
+  }
+
+  export type UpvoteScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<UpvoteScalarWhereWithAggregatesInput>
+    OR?: Enumerable<UpvoteScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<UpvoteScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    creatorId?: StringWithAggregatesFilter | string
+    postId?: StringWithAggregatesFilter | string
   }
 
   export type ImageWhereInput = {
@@ -8476,6 +9443,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8490,6 +9458,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUpdateInput = {
@@ -8504,6 +9473,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8518,6 +9488,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8669,60 +9640,54 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: UserCreateNestedOneWithoutPostsInput
     project: ProjectCreateNestedOneWithoutPostsInput
     images?: ImageCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
     projectId: string
     images?: ImageUncheckedCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: UserUpdateOneRequiredWithoutPostsNestedInput
     project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
     images?: ImageUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
     images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostCreateManyInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
@@ -8733,8 +9698,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8743,12 +9706,64 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UpvoteCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creator: UserCreateNestedOneWithoutUpvotesInput
+    post: PostCreateNestedOneWithoutUpvotesInput
+  }
+
+  export type UpvoteUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creatorId: string
+    postId: string
+  }
+
+  export type UpvoteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutUpvotesNestedInput
+    post?: PostUpdateOneRequiredWithoutUpvotesNestedInput
+  }
+
+  export type UpvoteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UpvoteCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creatorId: string
+    postId: string
+  }
+
+  export type UpvoteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpvoteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ImageCreateInput = {
@@ -9038,6 +10053,12 @@ export namespace Prisma {
     none?: PostWhereInput
   }
 
+  export type UpvoteListRelationFilter = {
+    every?: UpvoteWhereInput
+    some?: UpvoteWhereInput
+    none?: UpvoteWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -9051,6 +10072,10 @@ export namespace Prisma {
   }
 
   export type PostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UpvoteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9164,17 +10189,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
-  export type IntFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntFilter | number
-  }
-
   export type ProjectRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
@@ -9194,25 +10208,16 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    upvotes?: SortOrder
-    downvotes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
     projectId?: SortOrder
   }
 
-  export type PostAvgOrderByAggregateInput = {
-    upvotes?: SortOrder
-    downvotes?: SortOrder
-  }
-
   export type PostMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    upvotes?: SortOrder
-    downvotes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
@@ -9223,38 +10228,44 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
-    upvotes?: SortOrder
-    downvotes?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
     projectId?: SortOrder
   }
 
-  export type PostSumOrderByAggregateInput = {
-    upvotes?: SortOrder
-    downvotes?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntWithAggregatesFilter | number
-    _count?: NestedIntFilter
-    _avg?: NestedFloatFilter
-    _sum?: NestedIntFilter
-    _min?: NestedIntFilter
-    _max?: NestedIntFilter
-  }
-
   export type PostRelationFilter = {
     is?: PostWhereInput
     isNot?: PostWhereInput
+  }
+
+  export type UpvoteCreatorIdPostIdCompoundUniqueInput = {
+    creatorId: string
+    postId: string
+  }
+
+  export type UpvoteCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    postId?: SortOrder
+  }
+
+  export type UpvoteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    postId?: SortOrder
+  }
+
+  export type UpvoteMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    postId?: SortOrder
   }
 
   export type ImageCountOrderByAggregateInput = {
@@ -9354,6 +10365,13 @@ export namespace Prisma {
     connect?: Enumerable<PostWhereUniqueInput>
   }
 
+  export type UpvoteCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutCreatorInput>, Enumerable<UpvoteUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutCreatorInput>
+    createMany?: UpvoteCreateManyCreatorInputEnvelope
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -9380,6 +10398,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCreatorInput>
     createMany?: PostCreateManyCreatorInputEnvelope
     connect?: Enumerable<PostWhereUniqueInput>
+  }
+
+  export type UpvoteUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutCreatorInput>, Enumerable<UpvoteUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutCreatorInput>
+    createMany?: UpvoteCreateManyCreatorInputEnvelope
+    connect?: Enumerable<UpvoteWhereUniqueInput>
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -9442,6 +10467,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<PostScalarWhereInput>
   }
 
+  export type UpvoteUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutCreatorInput>, Enumerable<UpvoteUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<UpvoteUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: UpvoteCreateManyCreatorInputEnvelope
+    set?: Enumerable<UpvoteWhereUniqueInput>
+    disconnect?: Enumerable<UpvoteWhereUniqueInput>
+    delete?: Enumerable<UpvoteWhereUniqueInput>
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+    update?: Enumerable<UpvoteUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<UpvoteUpdateManyWithWhereWithoutCreatorInput>
+    deleteMany?: Enumerable<UpvoteScalarWhereInput>
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -9496,6 +10535,20 @@ export namespace Prisma {
     update?: Enumerable<PostUpdateWithWhereUniqueWithoutCreatorInput>
     updateMany?: Enumerable<PostUpdateManyWithWhereWithoutCreatorInput>
     deleteMany?: Enumerable<PostScalarWhereInput>
+  }
+
+  export type UpvoteUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutCreatorInput>, Enumerable<UpvoteUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<UpvoteUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: UpvoteCreateManyCreatorInputEnvelope
+    set?: Enumerable<UpvoteWhereUniqueInput>
+    disconnect?: Enumerable<UpvoteWhereUniqueInput>
+    delete?: Enumerable<UpvoteWhereUniqueInput>
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+    update?: Enumerable<UpvoteUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<UpvoteUpdateManyWithWhereWithoutCreatorInput>
+    deleteMany?: Enumerable<UpvoteScalarWhereInput>
   }
 
   export type UserCreateNestedOneWithoutProjectsInput = {
@@ -9577,6 +10630,13 @@ export namespace Prisma {
     connect?: Enumerable<ImageWhereUniqueInput>
   }
 
+  export type UpvoteCreateNestedManyWithoutPostInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutPostInput>, Enumerable<UpvoteUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutPostInput>
+    createMany?: UpvoteCreateManyPostInputEnvelope
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+  }
+
   export type ImageUncheckedCreateNestedManyWithoutPostInput = {
     create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
     connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
@@ -9584,12 +10644,11 @@ export namespace Prisma {
     connect?: Enumerable<ImageWhereUniqueInput>
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type UpvoteUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutPostInput>, Enumerable<UpvoteUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutPostInput>
+    createMany?: UpvoteCreateManyPostInputEnvelope
+    connect?: Enumerable<UpvoteWhereUniqueInput>
   }
 
   export type UserUpdateOneRequiredWithoutPostsNestedInput = {
@@ -9622,6 +10681,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<ImageScalarWhereInput>
   }
 
+  export type UpvoteUpdateManyWithoutPostNestedInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutPostInput>, Enumerable<UpvoteUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutPostInput>
+    upsert?: Enumerable<UpvoteUpsertWithWhereUniqueWithoutPostInput>
+    createMany?: UpvoteCreateManyPostInputEnvelope
+    set?: Enumerable<UpvoteWhereUniqueInput>
+    disconnect?: Enumerable<UpvoteWhereUniqueInput>
+    delete?: Enumerable<UpvoteWhereUniqueInput>
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+    update?: Enumerable<UpvoteUpdateWithWhereUniqueWithoutPostInput>
+    updateMany?: Enumerable<UpvoteUpdateManyWithWhereWithoutPostInput>
+    deleteMany?: Enumerable<UpvoteScalarWhereInput>
+  }
+
   export type ImageUncheckedUpdateManyWithoutPostNestedInput = {
     create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
     connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
@@ -9634,6 +10707,48 @@ export namespace Prisma {
     update?: Enumerable<ImageUpdateWithWhereUniqueWithoutPostInput>
     updateMany?: Enumerable<ImageUpdateManyWithWhereWithoutPostInput>
     deleteMany?: Enumerable<ImageScalarWhereInput>
+  }
+
+  export type UpvoteUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<Enumerable<UpvoteCreateWithoutPostInput>, Enumerable<UpvoteUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<UpvoteCreateOrConnectWithoutPostInput>
+    upsert?: Enumerable<UpvoteUpsertWithWhereUniqueWithoutPostInput>
+    createMany?: UpvoteCreateManyPostInputEnvelope
+    set?: Enumerable<UpvoteWhereUniqueInput>
+    disconnect?: Enumerable<UpvoteWhereUniqueInput>
+    delete?: Enumerable<UpvoteWhereUniqueInput>
+    connect?: Enumerable<UpvoteWhereUniqueInput>
+    update?: Enumerable<UpvoteUpdateWithWhereUniqueWithoutPostInput>
+    updateMany?: Enumerable<UpvoteUpdateManyWithWhereWithoutPostInput>
+    deleteMany?: Enumerable<UpvoteScalarWhereInput>
+  }
+
+  export type UserCreateNestedOneWithoutUpvotesInput = {
+    create?: XOR<UserCreateWithoutUpvotesInput, UserUncheckedCreateWithoutUpvotesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpvotesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type PostCreateNestedOneWithoutUpvotesInput = {
+    create?: XOR<PostCreateWithoutUpvotesInput, PostUncheckedCreateWithoutUpvotesInput>
+    connectOrCreate?: PostCreateOrConnectWithoutUpvotesInput
+    connect?: PostWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutUpvotesNestedInput = {
+    create?: XOR<UserCreateWithoutUpvotesInput, UserUncheckedCreateWithoutUpvotesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpvotesInput
+    upsert?: UserUpsertWithoutUpvotesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutUpvotesInput, UserUncheckedUpdateWithoutUpvotesInput>
+  }
+
+  export type PostUpdateOneRequiredWithoutUpvotesNestedInput = {
+    create?: XOR<PostCreateWithoutUpvotesInput, PostUncheckedCreateWithoutUpvotesInput>
+    connectOrCreate?: PostCreateOrConnectWithoutUpvotesInput
+    upsert?: PostUpsertWithoutUpvotesInput
+    connect?: PostWhereUniqueInput
+    update?: XOR<PostUpdateWithoutUpvotesInput, PostUncheckedUpdateWithoutUpvotesInput>
   }
 
   export type PostCreateNestedOneWithoutImagesInput = {
@@ -9824,33 +10939,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
-  export type NestedIntWithAggregatesFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntWithAggregatesFilter | number
-    _count?: NestedIntFilter
-    _avg?: NestedFloatFilter
-    _sum?: NestedIntFilter
-    _min?: NestedIntFilter
-    _max?: NestedIntFilter
-  }
-
-  export type NestedFloatFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedFloatFilter | number
-  }
-
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -9862,6 +10950,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -9875,6 +10964,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -9898,6 +10988,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -9911,6 +11002,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -9924,6 +11016,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
     posts?: PostCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -9937,6 +11030,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -9960,6 +11054,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
     posts?: PostUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -9973,6 +11068,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -10073,24 +11169,22 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutPostsInput
     images?: ImageCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutCreatorInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     projectId: string
     images?: ImageUncheckedCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutCreatorInput = {
@@ -10100,6 +11194,30 @@ export namespace Prisma {
 
   export type PostCreateManyCreatorInputEnvelope = {
     data: Enumerable<PostCreateManyCreatorInput>
+    skipDuplicates?: boolean
+  }
+
+  export type UpvoteCreateWithoutCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    post: PostCreateNestedOneWithoutUpvotesInput
+  }
+
+  export type UpvoteUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    postId: string
+  }
+
+  export type UpvoteCreateOrConnectWithoutCreatorInput = {
+    where: UpvoteWhereUniqueInput
+    create: XOR<UpvoteCreateWithoutCreatorInput, UpvoteUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type UpvoteCreateManyCreatorInputEnvelope = {
+    data: Enumerable<UpvoteCreateManyCreatorInput>
     skipDuplicates?: boolean
   }
 
@@ -10217,12 +11335,37 @@ export namespace Prisma {
     id?: StringFilter | string
     title?: StringFilter | string
     description?: StringNullableFilter | string | null
-    upvotes?: IntFilter | number
-    downvotes?: IntFilter | number
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
     projectId?: StringFilter | string
+  }
+
+  export type UpvoteUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: UpvoteWhereUniqueInput
+    update: XOR<UpvoteUpdateWithoutCreatorInput, UpvoteUncheckedUpdateWithoutCreatorInput>
+    create: XOR<UpvoteCreateWithoutCreatorInput, UpvoteUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type UpvoteUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: UpvoteWhereUniqueInput
+    data: XOR<UpvoteUpdateWithoutCreatorInput, UpvoteUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type UpvoteUpdateManyWithWhereWithoutCreatorInput = {
+    where: UpvoteScalarWhereInput
+    data: XOR<UpvoteUpdateManyMutationInput, UpvoteUncheckedUpdateManyWithoutUpvotesInput>
+  }
+
+  export type UpvoteScalarWhereInput = {
+    AND?: Enumerable<UpvoteScalarWhereInput>
+    OR?: Enumerable<UpvoteScalarWhereInput>
+    NOT?: Enumerable<UpvoteScalarWhereInput>
+    id?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    creatorId?: StringFilter | string
+    postId?: StringFilter | string
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -10236,6 +11379,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -10249,6 +11393,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -10260,24 +11405,22 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: UserCreateNestedOneWithoutPostsInput
     images?: ImageCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutProjectInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
     images?: ImageUncheckedCreateNestedManyWithoutPostInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutProjectInput = {
@@ -10306,6 +11449,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -10319,6 +11463,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type PostUpsertWithWhereUniqueWithoutProjectInput = {
@@ -10348,6 +11493,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -10361,6 +11507,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -10415,6 +11562,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UpvoteCreateWithoutPostInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creator: UserCreateNestedOneWithoutUpvotesInput
+  }
+
+  export type UpvoteUncheckedCreateWithoutPostInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creatorId: string
+  }
+
+  export type UpvoteCreateOrConnectWithoutPostInput = {
+    where: UpvoteWhereUniqueInput
+    create: XOR<UpvoteCreateWithoutPostInput, UpvoteUncheckedCreateWithoutPostInput>
+  }
+
+  export type UpvoteCreateManyPostInputEnvelope = {
+    data: Enumerable<UpvoteCreateManyPostInput>
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutPostsInput = {
     update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
     create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
@@ -10431,6 +11602,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -10444,6 +11616,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type ProjectUpsertWithoutPostsInput = {
@@ -10497,28 +11670,162 @@ export namespace Prisma {
     postId?: StringFilter | string
   }
 
-  export type PostCreateWithoutImagesInput = {
+  export type UpvoteUpsertWithWhereUniqueWithoutPostInput = {
+    where: UpvoteWhereUniqueInput
+    update: XOR<UpvoteUpdateWithoutPostInput, UpvoteUncheckedUpdateWithoutPostInput>
+    create: XOR<UpvoteCreateWithoutPostInput, UpvoteUncheckedCreateWithoutPostInput>
+  }
+
+  export type UpvoteUpdateWithWhereUniqueWithoutPostInput = {
+    where: UpvoteWhereUniqueInput
+    data: XOR<UpvoteUpdateWithoutPostInput, UpvoteUncheckedUpdateWithoutPostInput>
+  }
+
+  export type UpvoteUpdateManyWithWhereWithoutPostInput = {
+    where: UpvoteScalarWhereInput
+    data: XOR<UpvoteUpdateManyMutationInput, UpvoteUncheckedUpdateManyWithoutUpvotesInput>
+  }
+
+  export type UserCreateWithoutUpvotesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    projects?: ProjectCreateNestedManyWithoutCreatorInput
+    posts?: PostCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedCreateWithoutUpvotesInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserCreateOrConnectWithoutUpvotesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUpvotesInput, UserUncheckedCreateWithoutUpvotesInput>
+  }
+
+  export type PostCreateWithoutUpvotesInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: UserCreateNestedOneWithoutPostsInput
     project: ProjectCreateNestedOneWithoutPostsInput
+    images?: ImageCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUncheckedCreateWithoutUpvotesInput = {
+    id?: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    projectId: string
+    images?: ImageUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type PostCreateOrConnectWithoutUpvotesInput = {
+    where: PostWhereUniqueInput
+    create: XOR<PostCreateWithoutUpvotesInput, PostUncheckedCreateWithoutUpvotesInput>
+  }
+
+  export type UserUpsertWithoutUpvotesInput = {
+    update: XOR<UserUpdateWithoutUpvotesInput, UserUncheckedUpdateWithoutUpvotesInput>
+    create: XOR<UserCreateWithoutUpvotesInput, UserUncheckedCreateWithoutUpvotesInput>
+  }
+
+  export type UserUpdateWithoutUpvotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    projects?: ProjectUpdateManyWithoutCreatorNestedInput
+    posts?: PostUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutUpvotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type PostUpsertWithoutUpvotesInput = {
+    update: XOR<PostUpdateWithoutUpvotesInput, PostUncheckedUpdateWithoutUpvotesInput>
+    create: XOR<PostCreateWithoutUpvotesInput, PostUncheckedCreateWithoutUpvotesInput>
+  }
+
+  export type PostUpdateWithoutUpvotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutPostsNestedInput
+    project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
+    images?: ImageUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateWithoutUpvotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostCreateWithoutImagesInput = {
+    id?: string
+    title: string
+    description?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: UserCreateNestedOneWithoutPostsInput
+    project: ProjectCreateNestedOneWithoutPostsInput
+    upvotes?: UpvoteCreateNestedManyWithoutPostInput
   }
 
   export type PostUncheckedCreateWithoutImagesInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
     projectId: string
+    upvotes?: UpvoteUncheckedCreateNestedManyWithoutPostInput
   }
 
   export type PostCreateOrConnectWithoutImagesInput = {
@@ -10535,24 +11842,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: UserUpdateOneRequiredWithoutPostsNestedInput
     project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
+    upvotes?: UpvoteUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutImagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
+    upvotes?: UpvoteUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -10590,11 +11895,16 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     projectId: string
+  }
+
+  export type UpvoteCreateManyCreatorInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    postId: string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -10696,43 +12006,58 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
     images?: ImageUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projectId?: StringFieldUpdateOperationsInput | string
     images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateManyWithoutPostsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UpvoteUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: PostUpdateOneRequiredWithoutUpvotesNestedInput
+  }
+
+  export type UpvoteUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    postId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UpvoteUncheckedUpdateManyWithoutUpvotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    postId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PostCreateManyProjectInput = {
     id?: string
     title: string
     description?: string | null
-    upvotes: number
-    downvotes: number
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
@@ -10742,30 +12067,35 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: UserUpdateOneRequiredWithoutPostsNestedInput
     images?: ImageUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUpdateManyWithoutPostNestedInput
   }
 
   export type PostUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    upvotes?: IntFieldUpdateOperationsInput | number
-    downvotes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
     images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+    upvotes?: UpvoteUncheckedUpdateManyWithoutPostNestedInput
   }
 
   export type ImageCreateManyPostInput = {
     id?: string
     url: string
     createdAt?: Date | string
+  }
+
+  export type UpvoteCreateManyPostInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    creatorId: string
   }
 
   export type ImageUpdateWithoutPostInput = {
@@ -10784,6 +12114,20 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     url?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UpvoteUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutUpvotesNestedInput
+  }
+
+  export type UpvoteUncheckedUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
   }
 
 

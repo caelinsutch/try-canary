@@ -1,7 +1,7 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Icons } from "@/components/Icons";
-import { UserAuthForm } from "@/components/UserAuthForm";
+import { Icons } from '@/components/Icons';
+import { UserAuthForm } from '@/components/UserAuthForm';
 
 export default function RegisterPage() {
   return (
@@ -24,11 +24,11 @@ export default function RegisterPage() {
         </div>
         <UserAuthForm />
         <p className="px-8 text-center text-sm text-slate-500">
-          By clicking continue, you agree to our{" "}
+          By clicking continue, you agree to our{' '}
           <Link href="/terms" className="underline hover:text-brand">
             Terms of Service
-          </Link>{" "}
-          and{" "}
+          </Link>{' '}
+          and{' '}
           <Link href="/privacy" className="underline hover:text-brand">
             Privacy Policy
           </Link>

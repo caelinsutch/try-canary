@@ -1,7 +1,7 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Icons } from "@/components/icons";
-import { UserAuthForm } from "@/components/UserAuthForm";
+import { Icons } from '@/components/icons';
+import { UserAuthForm } from '@/components/UserAuthForm';
 
 export default function LoginPage() {
   return (
