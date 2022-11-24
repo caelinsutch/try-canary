@@ -1,6 +1,6 @@
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type AvatarProps = AvatarPrimitive.AvatarProps;
 
@@ -8,7 +8,7 @@ export function Avatar({ className, ...props }: AvatarProps) {
   return (
     <AvatarPrimitive.Root
       className={cn(
-        "flex h-[32px] w-[32px] items-center justify-center overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800",
+        'flex h-[32px] w-[32px] items-center justify-center overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800',
         className
       )}
       {...props}
@@ -19,7 +19,7 @@ export function Avatar({ className, ...props }: AvatarProps) {
 type AvatarImageProps = AvatarPrimitive.AvatarImageProps;
 
 Avatar.Image = function AvatarImage({ className, ...props }: AvatarImageProps) {
-  return <AvatarPrimitive.Image className={cn("", className)} {...props} />;
+  return <AvatarPrimitive.Image className={cn('', className)} {...props} />;
 };
 
 Avatar.Fallback = function AvatarFallback({
@@ -30,7 +30,7 @@ Avatar.Fallback = function AvatarFallback({
   return (
     <AvatarPrimitive.Fallback
       delayMs={500}
-      className={cn("dark:color-white dark:text-white", className)}
+      className={cn('dark:color-white dark:text-white', className)}
       {...props}
     >
       {children}

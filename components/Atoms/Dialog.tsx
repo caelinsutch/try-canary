@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
+import * as React from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type DialogPrimitiveProps = DialogPrimitive.DialogProps;
 
@@ -26,15 +26,15 @@ Dialog.Content = React.forwardRef<
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          "fixed inset-0 bg-black bg-opacity-50 transition-opacity",
+          'fixed inset-0 bg-black bg-opacity-50 transition-opacity',
           className
         )}
       />
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "bg-white dark:bg-neutral-900 rounded-md shadow-md border border-slate-50 dark:border-slate-700 fixed radius-1 top-1/2 left-1/2 " +
-            "p-4 min-w-[300px] max-w-[600px] max-h-[90vh] transform -translate-x-1/2 -translate-y-1/2",
+          'bg-white dark:bg-neutral-900 rounded-md shadow-md border border-slate-50 dark:border-slate-700 fixed radius-1 top-1/2 left-1/2 ' +
+            'p-4 min-w-[300px] max-w-[600px] max-h-[90vh] transform -translate-x-1/2 -translate-y-1/2',
           className
         )}
         {...props}
@@ -51,7 +51,7 @@ Dialog.Title = React.forwardRef<
     <DialogPrimitive.Title
       ref={ref}
       className={cn(
-        "text-lg font-semibold text-slate-900 dark:text-white",
+        'text-lg font-semibold text-slate-900 dark:text-white',
         className
       )}
       {...props}
@@ -66,7 +66,7 @@ Dialog.Close = React.forwardRef<
   return (
     <DialogPrimitive.Close
       ref={ref}
-      className={cn("text-slate-900 dark:text-white", className)}
+      className={cn('text-slate-900 dark:text-white', className)}
       {...props}
     />
   );

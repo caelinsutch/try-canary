@@ -1,12 +1,12 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { formatDate } from "@/lib/utils";
-import { Skeleton } from "@/components/Atoms/Skeleton";
-import { Project } from "@/lib/prisma";
-import React from "react";
+import { formatDate } from '@/lib/utils';
+import { Skeleton } from '@/components/Atoms/Skeleton';
+import { Project } from '@/lib/prisma';
+import React from 'react';
 
 type ProjectItemProps = {
-  post: Pick<Project, "id" | "name" | "createdAt">;
+  post: Pick<Project, 'id' | 'name' | 'createdAt'>;
 };
 
 export const ProjectItem = ({ post }: ProjectItemProps): React.ReactNode => (

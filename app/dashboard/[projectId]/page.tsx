@@ -36,7 +36,7 @@ const ManageProject = async ({ params: { projectId } }: ManageProjectProps) => {
 			<BreadCrumbs
 				breadCrumbs={[
 					{
-						name: "Dashboard",
+						name: "All Projects",
 						href: "/dashboard",
 					},
 					{

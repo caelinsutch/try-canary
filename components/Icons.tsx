@@ -17,8 +17,8 @@ import {
   X,
   ChevronRight,
   Home,
-} from "lucide-react";
-import type { Icon as LucideIcon } from "lucide-react";
+} from 'lucide-react';
+import type { Icon as LucideIcon } from 'lucide-react';
 
 export type Icon = LucideIcon;
 

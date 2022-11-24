@@ -75,9 +75,38 @@ export type VerificationToken = {
 export type Project = {
   id: string
   name: string
+  logo: string | null
+  requireAccountToVote: boolean
   createdAt: Date
   updatedAt: Date
   creatorId: string
+}
+
+/**
+ * Model Post
+ * 
+ */
+export type Post = {
+  id: string
+  title: string
+  description: string | null
+  upvotes: number
+  downvotes: number
+  createdAt: Date
+  updatedAt: Date
+  creatorId: string
+  projectId: string
+}
+
+/**
+ * Model Image
+ * 
+ */
+export type Image = {
+  id: string
+  url: string
+  createdAt: Date
+  postId: string
 }
 
 
@@ -270,6 +299,26 @@ export class PrismaClient<
     * ```
     */
   get project(): Prisma.ProjectDelegate<GlobalReject>;
+
+  /**
+   * `prisma.post`: Exposes CRUD operations for the **Post** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Posts
+    * const posts = await prisma.post.findMany()
+    * ```
+    */
+  get post(): Prisma.PostDelegate<GlobalReject>;
+
+  /**
+   * `prisma.image`: Exposes CRUD operations for the **Image** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Images
+    * const images = await prisma.image.findMany()
+    * ```
+    */
+  get image(): Prisma.ImageDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -762,7 +811,9 @@ export namespace Prisma {
     Session: 'Session',
     User: 'User',
     VerificationToken: 'VerificationToken',
-    Project: 'Project'
+    Project: 'Project',
+    Post: 'Post',
+    Image: 'Image'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -930,12 +981,14 @@ export namespace Prisma {
     accounts: number
     sessions: number
     projects: number
+    posts: number
   }
 
   export type UserCountOutputTypeSelect = {
     accounts?: boolean
     sessions?: boolean
     projects?: boolean
+    posts?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<
@@ -970,6 +1023,104 @@ export namespace Prisma {
      * 
     **/
     select?: UserCountOutputTypeSelect | null
+  }
+
+
+
+  /**
+   * Count Type ProjectCountOutputType
+   */
+
+
+  export type ProjectCountOutputType = {
+    posts: number
+  }
+
+  export type ProjectCountOutputTypeSelect = {
+    posts?: boolean
+  }
+
+  export type ProjectCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | ProjectCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? ProjectCountOutputType
+    : S extends undefined
+    ? never
+    : S extends ProjectCountOutputTypeArgs
+    ?'include' extends U
+    ? ProjectCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof ProjectCountOutputType ? ProjectCountOutputType[P] : never
+  } 
+    : ProjectCountOutputType
+  : ProjectCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the ProjectCountOutputType
+     * 
+    **/
+    select?: ProjectCountOutputTypeSelect | null
+  }
+
+
+
+  /**
+   * Count Type PostCountOutputType
+   */
+
+
+  export type PostCountOutputType = {
+    images: number
+  }
+
+  export type PostCountOutputTypeSelect = {
+    images?: boolean
+  }
+
+  export type PostCountOutputTypeGetPayload<
+    S extends boolean | null | undefined | PostCountOutputTypeArgs,
+    U = keyof S
+      > = S extends true
+        ? PostCountOutputType
+    : S extends undefined
+    ? never
+    : S extends PostCountOutputTypeArgs
+    ?'include' extends U
+    ? PostCountOutputType 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+    P extends keyof PostCountOutputType ? PostCountOutputType[P] : never
+  } 
+    : PostCountOutputType
+  : PostCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * PostCountOutputType without action
+   */
+  export type PostCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the PostCountOutputType
+     * 
+    **/
+    select?: PostCountOutputTypeSelect | null
   }
 
 
@@ -3116,6 +3267,7 @@ export namespace Prisma {
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
     projects?: boolean | ProjectFindManyArgs
+    posts?: boolean | PostFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -3123,6 +3275,7 @@ export namespace Prisma {
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
     projects?: boolean | ProjectFindManyArgs
+    posts?: boolean | PostFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -3140,6 +3293,7 @@ export namespace Prisma {
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'posts' ? Array < PostGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
@@ -3148,6 +3302,7 @@ export namespace Prisma {
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'posts' ? Array < PostGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
   } 
     : User
@@ -3528,6 +3683,8 @@ export namespace Prisma {
     sessions<T extends SessionFindManyArgs = {}>(args?: Subset<T, SessionFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Session>| Null>, PrismaPromise<Array<SessionGetPayload<T>>| Null>>;
 
     projects<T extends ProjectFindManyArgs = {}>(args?: Subset<T, ProjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Project>| Null>, PrismaPromise<Array<ProjectGetPayload<T>>| Null>>;
+
+    posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>| Null>, PrismaPromise<Array<PostGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -4757,6 +4914,8 @@ export namespace Prisma {
   export type ProjectMinAggregateOutputType = {
     id: string | null
     name: string | null
+    logo: string | null
+    requireAccountToVote: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
@@ -4765,6 +4924,8 @@ export namespace Prisma {
   export type ProjectMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    logo: string | null
+    requireAccountToVote: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
@@ -4773,6 +4934,8 @@ export namespace Prisma {
   export type ProjectCountAggregateOutputType = {
     id: number
     name: number
+    logo: number
+    requireAccountToVote: number
     createdAt: number
     updatedAt: number
     creatorId: number
@@ -4783,6 +4946,8 @@ export namespace Prisma {
   export type ProjectMinAggregateInputType = {
     id?: true
     name?: true
+    logo?: true
+    requireAccountToVote?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -4791,6 +4956,8 @@ export namespace Prisma {
   export type ProjectMaxAggregateInputType = {
     id?: true
     name?: true
+    logo?: true
+    requireAccountToVote?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -4799,6 +4966,8 @@ export namespace Prisma {
   export type ProjectCountAggregateInputType = {
     id?: true
     name?: true
+    logo?: true
+    requireAccountToVote?: true
     createdAt?: true
     updatedAt?: true
     creatorId?: true
@@ -4886,6 +5055,8 @@ export namespace Prisma {
   export type ProjectGroupByOutputType = {
     id: string
     name: string
+    logo: string | null
+    requireAccountToVote: boolean
     createdAt: Date
     updatedAt: Date
     creatorId: string
@@ -4911,14 +5082,20 @@ export namespace Prisma {
   export type ProjectSelect = {
     id?: boolean
     name?: boolean
+    logo?: boolean
+    requireAccountToVote?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     creatorId?: boolean
     creator?: boolean | UserArgs
+    posts?: boolean | PostFindManyArgs
+    _count?: boolean | ProjectCountOutputTypeArgs
   }
 
   export type ProjectInclude = {
     creator?: boolean | UserArgs
+    posts?: boolean | PostFindManyArgs
+    _count?: boolean | ProjectCountOutputTypeArgs
   }
 
   export type ProjectGetPayload<
@@ -4932,12 +5109,16 @@ export namespace Prisma {
     ?'include' extends U
     ? Project  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'posts' ? Array < PostGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? ProjectCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Project ? Project[P] : never
+        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'posts' ? Array < PostGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? ProjectCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Project ? Project[P] : never
   } 
     : Project
   : Project
@@ -5314,6 +5495,8 @@ export namespace Prisma {
 
     creator<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
 
+    posts<T extends PostFindManyArgs = {}>(args?: Subset<T, PostFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Post>| Null>, PrismaPromise<Array<PostGetPayload<T>>| Null>>;
+
     private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5669,6 +5852,1934 @@ export namespace Prisma {
 
 
   /**
+   * Model Post
+   */
+
+
+  export type AggregatePost = {
+    _count: PostCountAggregateOutputType | null
+    _avg: PostAvgAggregateOutputType | null
+    _sum: PostSumAggregateOutputType | null
+    _min: PostMinAggregateOutputType | null
+    _max: PostMaxAggregateOutputType | null
+  }
+
+  export type PostAvgAggregateOutputType = {
+    upvotes: number | null
+    downvotes: number | null
+  }
+
+  export type PostSumAggregateOutputType = {
+    upvotes: number | null
+    downvotes: number | null
+  }
+
+  export type PostMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    upvotes: number | null
+    downvotes: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    creatorId: string | null
+    projectId: string | null
+  }
+
+  export type PostMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    upvotes: number | null
+    downvotes: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    creatorId: string | null
+    projectId: string | null
+  }
+
+  export type PostCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    upvotes: number
+    downvotes: number
+    createdAt: number
+    updatedAt: number
+    creatorId: number
+    projectId: number
+    _all: number
+  }
+
+
+  export type PostAvgAggregateInputType = {
+    upvotes?: true
+    downvotes?: true
+  }
+
+  export type PostSumAggregateInputType = {
+    upvotes?: true
+    downvotes?: true
+  }
+
+  export type PostMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    upvotes?: true
+    downvotes?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    projectId?: true
+  }
+
+  export type PostMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    upvotes?: true
+    downvotes?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    projectId?: true
+  }
+
+  export type PostCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    upvotes?: true
+    downvotes?: true
+    createdAt?: true
+    updatedAt?: true
+    creatorId?: true
+    projectId?: true
+    _all?: true
+  }
+
+  export type PostAggregateArgs = {
+    /**
+     * Filter which Post to aggregate.
+     * 
+    **/
+    where?: PostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Posts to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<PostOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: PostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Posts from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Posts.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Posts
+    **/
+    _count?: true | PostCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PostAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PostSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PostMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PostMaxAggregateInputType
+  }
+
+  export type GetPostAggregateType<T extends PostAggregateArgs> = {
+        [P in keyof T & keyof AggregatePost]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePost[P]>
+      : GetScalarType<T[P], AggregatePost[P]>
+  }
+
+
+
+
+  export type PostGroupByArgs = {
+    where?: PostWhereInput
+    orderBy?: Enumerable<PostOrderByWithAggregationInput>
+    by: Array<PostScalarFieldEnum>
+    having?: PostScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PostCountAggregateInputType | true
+    _avg?: PostAvgAggregateInputType
+    _sum?: PostSumAggregateInputType
+    _min?: PostMinAggregateInputType
+    _max?: PostMaxAggregateInputType
+  }
+
+
+  export type PostGroupByOutputType = {
+    id: string
+    title: string
+    description: string | null
+    upvotes: number
+    downvotes: number
+    createdAt: Date
+    updatedAt: Date
+    creatorId: string
+    projectId: string
+    _count: PostCountAggregateOutputType | null
+    _avg: PostAvgAggregateOutputType | null
+    _sum: PostSumAggregateOutputType | null
+    _min: PostMinAggregateOutputType | null
+    _max: PostMaxAggregateOutputType | null
+  }
+
+  type GetPostGroupByPayload<T extends PostGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<PostGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PostGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PostGroupByOutputType[P]>
+            : GetScalarType<T[P], PostGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PostSelect = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    upvotes?: boolean
+    downvotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    creatorId?: boolean
+    projectId?: boolean
+    creator?: boolean | UserArgs
+    project?: boolean | ProjectArgs
+    images?: boolean | ImageFindManyArgs
+    _count?: boolean | PostCountOutputTypeArgs
+  }
+
+  export type PostInclude = {
+    creator?: boolean | UserArgs
+    project?: boolean | ProjectArgs
+    images?: boolean | ImageFindManyArgs
+    _count?: boolean | PostCountOutputTypeArgs
+  }
+
+  export type PostGetPayload<
+    S extends boolean | null | undefined | PostArgs,
+    U = keyof S
+      > = S extends true
+        ? Post
+    : S extends undefined
+    ? never
+    : S extends PostArgs | PostFindManyArgs
+    ?'include' extends U
+    ? Post  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'project' ? ProjectGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'images' ? Array < ImageGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends '_count' ? PostCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'project' ? ProjectGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'images' ? Array < ImageGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends '_count' ? PostCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Post ? Post[P] : never
+  } 
+    : Post
+  : Post
+
+
+  type PostCountArgs = Merge<
+    Omit<PostFindManyArgs, 'select' | 'include'> & {
+      select?: PostCountAggregateInputType | true
+    }
+  >
+
+  export interface PostDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one Post that matches the filter.
+     * @param {PostFindUniqueArgs} args - Arguments to find a Post
+     * @example
+     * // Get one Post
+     * const post = await prisma.post.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends PostFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, PostFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Post'> extends True ? CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>> : CheckSelect<T, Prisma__PostClient<Post | null, null>, Prisma__PostClient<PostGetPayload<T> | null, null>>
+
+    /**
+     * Find the first Post that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostFindFirstArgs} args - Arguments to find a Post
+     * @example
+     * // Get one Post
+     * const post = await prisma.post.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends PostFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, PostFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Post'> extends True ? CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>> : CheckSelect<T, Prisma__PostClient<Post | null, null>, Prisma__PostClient<PostGetPayload<T> | null, null>>
+
+    /**
+     * Find zero or more Posts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Posts
+     * const posts = await prisma.post.findMany()
+     * 
+     * // Get first 10 Posts
+     * const posts = await prisma.post.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const postWithIdOnly = await prisma.post.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends PostFindManyArgs>(
+      args?: SelectSubset<T, PostFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Post>>, PrismaPromise<Array<PostGetPayload<T>>>>
+
+    /**
+     * Create a Post.
+     * @param {PostCreateArgs} args - Arguments to create a Post.
+     * @example
+     * // Create one Post
+     * const Post = await prisma.post.create({
+     *   data: {
+     *     // ... data to create a Post
+     *   }
+     * })
+     * 
+    **/
+    create<T extends PostCreateArgs>(
+      args: SelectSubset<T, PostCreateArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Create many Posts.
+     *     @param {PostCreateManyArgs} args - Arguments to create many Posts.
+     *     @example
+     *     // Create many Posts
+     *     const post = await prisma.post.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends PostCreateManyArgs>(
+      args?: SelectSubset<T, PostCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Post.
+     * @param {PostDeleteArgs} args - Arguments to delete one Post.
+     * @example
+     * // Delete one Post
+     * const Post = await prisma.post.delete({
+     *   where: {
+     *     // ... filter to delete one Post
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends PostDeleteArgs>(
+      args: SelectSubset<T, PostDeleteArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Update one Post.
+     * @param {PostUpdateArgs} args - Arguments to update one Post.
+     * @example
+     * // Update one Post
+     * const post = await prisma.post.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends PostUpdateArgs>(
+      args: SelectSubset<T, PostUpdateArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Delete zero or more Posts.
+     * @param {PostDeleteManyArgs} args - Arguments to filter Posts to delete.
+     * @example
+     * // Delete a few Posts
+     * const { count } = await prisma.post.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends PostDeleteManyArgs>(
+      args?: SelectSubset<T, PostDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Posts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Posts
+     * const post = await prisma.post.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends PostUpdateManyArgs>(
+      args: SelectSubset<T, PostUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Post.
+     * @param {PostUpsertArgs} args - Arguments to update or create a Post.
+     * @example
+     * // Update or create a Post
+     * const post = await prisma.post.upsert({
+     *   create: {
+     *     // ... data to create a Post
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Post we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends PostUpsertArgs>(
+      args: SelectSubset<T, PostUpsertArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Find one Post that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {PostFindUniqueOrThrowArgs} args - Arguments to find a Post
+     * @example
+     * // Get one Post
+     * const post = await prisma.post.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends PostFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, PostFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Find the first Post that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostFindFirstOrThrowArgs} args - Arguments to find a Post
+     * @example
+     * // Get one Post
+     * const post = await prisma.post.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends PostFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, PostFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__PostClient<Post>, Prisma__PostClient<PostGetPayload<T>>>
+
+    /**
+     * Count the number of Posts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostCountArgs} args - Arguments to filter Posts to count.
+     * @example
+     * // Count the number of Posts
+     * const count = await prisma.post.count({
+     *   where: {
+     *     // ... the filter for the Posts we want to count
+     *   }
+     * })
+    **/
+    count<T extends PostCountArgs>(
+      args?: Subset<T, PostCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PostCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Post.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PostAggregateArgs>(args: Subset<T, PostAggregateArgs>): PrismaPromise<GetPostAggregateType<T>>
+
+    /**
+     * Group by Post.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PostGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PostGroupByArgs['orderBy'] }
+        : { orderBy?: PostGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PostGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPostGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Post.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__PostClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    creator<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+
+    project<T extends ProjectArgs = {}>(args?: Subset<T, ProjectArgs>): CheckSelect<T, Prisma__ProjectClient<Project | Null>, Prisma__ProjectClient<ProjectGetPayload<T> | Null>>;
+
+    images<T extends ImageFindManyArgs = {}>(args?: Subset<T, ImageFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Image>| Null>, PrismaPromise<Array<ImageGetPayload<T>>| Null>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Post base type for findUnique actions
+   */
+  export type PostFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * Filter, which Post to fetch.
+     * 
+    **/
+    where: PostWhereUniqueInput
+  }
+
+  /**
+   * Post: findUnique
+   */
+  export interface PostFindUniqueArgs extends PostFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Post base type for findFirst actions
+   */
+  export type PostFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * Filter, which Post to fetch.
+     * 
+    **/
+    where?: PostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Posts to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<PostOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Posts.
+     * 
+    **/
+    cursor?: PostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Posts from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Posts.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Posts.
+     * 
+    **/
+    distinct?: Enumerable<PostScalarFieldEnum>
+  }
+
+  /**
+   * Post: findFirst
+   */
+  export interface PostFindFirstArgs extends PostFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Post findMany
+   */
+  export type PostFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * Filter, which Posts to fetch.
+     * 
+    **/
+    where?: PostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Posts to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<PostOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Posts.
+     * 
+    **/
+    cursor?: PostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Posts from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Posts.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<PostScalarFieldEnum>
+  }
+
+
+  /**
+   * Post create
+   */
+  export type PostCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * The data needed to create a Post.
+     * 
+    **/
+    data: XOR<PostCreateInput, PostUncheckedCreateInput>
+  }
+
+
+  /**
+   * Post createMany
+   */
+  export type PostCreateManyArgs = {
+    /**
+     * The data used to create many Posts.
+     * 
+    **/
+    data: Enumerable<PostCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Post update
+   */
+  export type PostUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * The data needed to update a Post.
+     * 
+    **/
+    data: XOR<PostUpdateInput, PostUncheckedUpdateInput>
+    /**
+     * Choose, which Post to update.
+     * 
+    **/
+    where: PostWhereUniqueInput
+  }
+
+
+  /**
+   * Post updateMany
+   */
+  export type PostUpdateManyArgs = {
+    /**
+     * The data used to update Posts.
+     * 
+    **/
+    data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyInput>
+    /**
+     * Filter which Posts to update
+     * 
+    **/
+    where?: PostWhereInput
+  }
+
+
+  /**
+   * Post upsert
+   */
+  export type PostUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * The filter to search for the Post to update in case it exists.
+     * 
+    **/
+    where: PostWhereUniqueInput
+    /**
+     * In case the Post found by the `where` argument doesn't exist, create a new Post with this data.
+     * 
+    **/
+    create: XOR<PostCreateInput, PostUncheckedCreateInput>
+    /**
+     * In case the Post was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<PostUpdateInput, PostUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Post delete
+   */
+  export type PostDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+    /**
+     * Filter which Post to delete.
+     * 
+    **/
+    where: PostWhereUniqueInput
+  }
+
+
+  /**
+   * Post deleteMany
+   */
+  export type PostDeleteManyArgs = {
+    /**
+     * Filter which Posts to delete
+     * 
+    **/
+    where?: PostWhereInput
+  }
+
+
+  /**
+   * Post: findUniqueOrThrow
+   */
+  export type PostFindUniqueOrThrowArgs = PostFindUniqueArgsBase
+      
+
+  /**
+   * Post: findFirstOrThrow
+   */
+  export type PostFindFirstOrThrowArgs = PostFindFirstArgsBase
+      
+
+  /**
+   * Post without action
+   */
+  export type PostArgs = {
+    /**
+     * Select specific fields to fetch from the Post
+     * 
+    **/
+    select?: PostSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PostInclude | null
+  }
+
+
+
+  /**
+   * Model Image
+   */
+
+
+  export type AggregateImage = {
+    _count: ImageCountAggregateOutputType | null
+    _min: ImageMinAggregateOutputType | null
+    _max: ImageMaxAggregateOutputType | null
+  }
+
+  export type ImageMinAggregateOutputType = {
+    id: string | null
+    url: string | null
+    createdAt: Date | null
+    postId: string | null
+  }
+
+  export type ImageMaxAggregateOutputType = {
+    id: string | null
+    url: string | null
+    createdAt: Date | null
+    postId: string | null
+  }
+
+  export type ImageCountAggregateOutputType = {
+    id: number
+    url: number
+    createdAt: number
+    postId: number
+    _all: number
+  }
+
+
+  export type ImageMinAggregateInputType = {
+    id?: true
+    url?: true
+    createdAt?: true
+    postId?: true
+  }
+
+  export type ImageMaxAggregateInputType = {
+    id?: true
+    url?: true
+    createdAt?: true
+    postId?: true
+  }
+
+  export type ImageCountAggregateInputType = {
+    id?: true
+    url?: true
+    createdAt?: true
+    postId?: true
+    _all?: true
+  }
+
+  export type ImageAggregateArgs = {
+    /**
+     * Filter which Image to aggregate.
+     * 
+    **/
+    where?: ImageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Images to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ImageOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: ImageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Images from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Images.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Images
+    **/
+    _count?: true | ImageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ImageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ImageMaxAggregateInputType
+  }
+
+  export type GetImageAggregateType<T extends ImageAggregateArgs> = {
+        [P in keyof T & keyof AggregateImage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateImage[P]>
+      : GetScalarType<T[P], AggregateImage[P]>
+  }
+
+
+
+
+  export type ImageGroupByArgs = {
+    where?: ImageWhereInput
+    orderBy?: Enumerable<ImageOrderByWithAggregationInput>
+    by: Array<ImageScalarFieldEnum>
+    having?: ImageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ImageCountAggregateInputType | true
+    _min?: ImageMinAggregateInputType
+    _max?: ImageMaxAggregateInputType
+  }
+
+
+  export type ImageGroupByOutputType = {
+    id: string
+    url: string
+    createdAt: Date
+    postId: string
+    _count: ImageCountAggregateOutputType | null
+    _min: ImageMinAggregateOutputType | null
+    _max: ImageMaxAggregateOutputType | null
+  }
+
+  type GetImageGroupByPayload<T extends ImageGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<ImageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ImageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ImageGroupByOutputType[P]>
+            : GetScalarType<T[P], ImageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ImageSelect = {
+    id?: boolean
+    url?: boolean
+    createdAt?: boolean
+    postId?: boolean
+    post?: boolean | PostArgs
+  }
+
+  export type ImageInclude = {
+    post?: boolean | PostArgs
+  }
+
+  export type ImageGetPayload<
+    S extends boolean | null | undefined | ImageArgs,
+    U = keyof S
+      > = S extends true
+        ? Image
+    : S extends undefined
+    ? never
+    : S extends ImageArgs | ImageFindManyArgs
+    ?'include' extends U
+    ? Image  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'post' ? PostGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'post' ? PostGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Image ? Image[P] : never
+  } 
+    : Image
+  : Image
+
+
+  type ImageCountArgs = Merge<
+    Omit<ImageFindManyArgs, 'select' | 'include'> & {
+      select?: ImageCountAggregateInputType | true
+    }
+  >
+
+  export interface ImageDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one Image that matches the filter.
+     * @param {ImageFindUniqueArgs} args - Arguments to find a Image
+     * @example
+     * // Get one Image
+     * const image = await prisma.image.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends ImageFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, ImageFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Image'> extends True ? CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>> : CheckSelect<T, Prisma__ImageClient<Image | null, null>, Prisma__ImageClient<ImageGetPayload<T> | null, null>>
+
+    /**
+     * Find the first Image that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageFindFirstArgs} args - Arguments to find a Image
+     * @example
+     * // Get one Image
+     * const image = await prisma.image.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends ImageFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, ImageFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Image'> extends True ? CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>> : CheckSelect<T, Prisma__ImageClient<Image | null, null>, Prisma__ImageClient<ImageGetPayload<T> | null, null>>
+
+    /**
+     * Find zero or more Images that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Images
+     * const images = await prisma.image.findMany()
+     * 
+     * // Get first 10 Images
+     * const images = await prisma.image.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const imageWithIdOnly = await prisma.image.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends ImageFindManyArgs>(
+      args?: SelectSubset<T, ImageFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<Image>>, PrismaPromise<Array<ImageGetPayload<T>>>>
+
+    /**
+     * Create a Image.
+     * @param {ImageCreateArgs} args - Arguments to create a Image.
+     * @example
+     * // Create one Image
+     * const Image = await prisma.image.create({
+     *   data: {
+     *     // ... data to create a Image
+     *   }
+     * })
+     * 
+    **/
+    create<T extends ImageCreateArgs>(
+      args: SelectSubset<T, ImageCreateArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Create many Images.
+     *     @param {ImageCreateManyArgs} args - Arguments to create many Images.
+     *     @example
+     *     // Create many Images
+     *     const image = await prisma.image.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends ImageCreateManyArgs>(
+      args?: SelectSubset<T, ImageCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Image.
+     * @param {ImageDeleteArgs} args - Arguments to delete one Image.
+     * @example
+     * // Delete one Image
+     * const Image = await prisma.image.delete({
+     *   where: {
+     *     // ... filter to delete one Image
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends ImageDeleteArgs>(
+      args: SelectSubset<T, ImageDeleteArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Update one Image.
+     * @param {ImageUpdateArgs} args - Arguments to update one Image.
+     * @example
+     * // Update one Image
+     * const image = await prisma.image.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends ImageUpdateArgs>(
+      args: SelectSubset<T, ImageUpdateArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Delete zero or more Images.
+     * @param {ImageDeleteManyArgs} args - Arguments to filter Images to delete.
+     * @example
+     * // Delete a few Images
+     * const { count } = await prisma.image.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends ImageDeleteManyArgs>(
+      args?: SelectSubset<T, ImageDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Images.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Images
+     * const image = await prisma.image.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends ImageUpdateManyArgs>(
+      args: SelectSubset<T, ImageUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Image.
+     * @param {ImageUpsertArgs} args - Arguments to update or create a Image.
+     * @example
+     * // Update or create a Image
+     * const image = await prisma.image.upsert({
+     *   create: {
+     *     // ... data to create a Image
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Image we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends ImageUpsertArgs>(
+      args: SelectSubset<T, ImageUpsertArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Find one Image that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {ImageFindUniqueOrThrowArgs} args - Arguments to find a Image
+     * @example
+     * // Get one Image
+     * const image = await prisma.image.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ImageFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, ImageFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Find the first Image that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageFindFirstOrThrowArgs} args - Arguments to find a Image
+     * @example
+     * // Get one Image
+     * const image = await prisma.image.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ImageFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, ImageFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__ImageClient<Image>, Prisma__ImageClient<ImageGetPayload<T>>>
+
+    /**
+     * Count the number of Images.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageCountArgs} args - Arguments to filter Images to count.
+     * @example
+     * // Count the number of Images
+     * const count = await prisma.image.count({
+     *   where: {
+     *     // ... the filter for the Images we want to count
+     *   }
+     * })
+    **/
+    count<T extends ImageCountArgs>(
+      args?: Subset<T, ImageCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ImageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Image.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ImageAggregateArgs>(args: Subset<T, ImageAggregateArgs>): PrismaPromise<GetImageAggregateType<T>>
+
+    /**
+     * Group by Image.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ImageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ImageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ImageGroupByArgs['orderBy'] }
+        : { orderBy?: ImageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ImageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetImageGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Image.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__ImageClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    post<T extends PostArgs = {}>(args?: Subset<T, PostArgs>): CheckSelect<T, Prisma__PostClient<Post | Null>, Prisma__PostClient<PostGetPayload<T> | Null>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Image base type for findUnique actions
+   */
+  export type ImageFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * Filter, which Image to fetch.
+     * 
+    **/
+    where: ImageWhereUniqueInput
+  }
+
+  /**
+   * Image: findUnique
+   */
+  export interface ImageFindUniqueArgs extends ImageFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Image base type for findFirst actions
+   */
+  export type ImageFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * Filter, which Image to fetch.
+     * 
+    **/
+    where?: ImageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Images to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ImageOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Images.
+     * 
+    **/
+    cursor?: ImageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Images from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Images.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Images.
+     * 
+    **/
+    distinct?: Enumerable<ImageScalarFieldEnum>
+  }
+
+  /**
+   * Image: findFirst
+   */
+  export interface ImageFindFirstArgs extends ImageFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Image findMany
+   */
+  export type ImageFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * Filter, which Images to fetch.
+     * 
+    **/
+    where?: ImageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Images to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ImageOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Images.
+     * 
+    **/
+    cursor?: ImageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Images from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Images.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<ImageScalarFieldEnum>
+  }
+
+
+  /**
+   * Image create
+   */
+  export type ImageCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * The data needed to create a Image.
+     * 
+    **/
+    data: XOR<ImageCreateInput, ImageUncheckedCreateInput>
+  }
+
+
+  /**
+   * Image createMany
+   */
+  export type ImageCreateManyArgs = {
+    /**
+     * The data used to create many Images.
+     * 
+    **/
+    data: Enumerable<ImageCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Image update
+   */
+  export type ImageUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * The data needed to update a Image.
+     * 
+    **/
+    data: XOR<ImageUpdateInput, ImageUncheckedUpdateInput>
+    /**
+     * Choose, which Image to update.
+     * 
+    **/
+    where: ImageWhereUniqueInput
+  }
+
+
+  /**
+   * Image updateMany
+   */
+  export type ImageUpdateManyArgs = {
+    /**
+     * The data used to update Images.
+     * 
+    **/
+    data: XOR<ImageUpdateManyMutationInput, ImageUncheckedUpdateManyInput>
+    /**
+     * Filter which Images to update
+     * 
+    **/
+    where?: ImageWhereInput
+  }
+
+
+  /**
+   * Image upsert
+   */
+  export type ImageUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * The filter to search for the Image to update in case it exists.
+     * 
+    **/
+    where: ImageWhereUniqueInput
+    /**
+     * In case the Image found by the `where` argument doesn't exist, create a new Image with this data.
+     * 
+    **/
+    create: XOR<ImageCreateInput, ImageUncheckedCreateInput>
+    /**
+     * In case the Image was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<ImageUpdateInput, ImageUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Image delete
+   */
+  export type ImageDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+    /**
+     * Filter which Image to delete.
+     * 
+    **/
+    where: ImageWhereUniqueInput
+  }
+
+
+  /**
+   * Image deleteMany
+   */
+  export type ImageDeleteManyArgs = {
+    /**
+     * Filter which Images to delete
+     * 
+    **/
+    where?: ImageWhereInput
+  }
+
+
+  /**
+   * Image: findUniqueOrThrow
+   */
+  export type ImageFindUniqueOrThrowArgs = ImageFindUniqueArgsBase
+      
+
+  /**
+   * Image: findFirstOrThrow
+   */
+  export type ImageFindFirstOrThrowArgs = ImageFindFirstArgsBase
+      
+
+  /**
+   * Image without action
+   */
+  export type ImageArgs = {
+    /**
+     * Select specific fields to fetch from the Image
+     * 
+    **/
+    select?: ImageSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ImageInclude | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -5695,9 +7806,36 @@ export namespace Prisma {
   export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
+  export const ImageScalarFieldEnum: {
+    id: 'id',
+    url: 'url',
+    createdAt: 'createdAt',
+    postId: 'postId'
+  };
+
+  export type ImageScalarFieldEnum = (typeof ImageScalarFieldEnum)[keyof typeof ImageScalarFieldEnum]
+
+
+  export const PostScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    upvotes: 'upvotes',
+    downvotes: 'downvotes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    creatorId: 'creatorId',
+    projectId: 'projectId'
+  };
+
+  export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
   export const ProjectScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    logo: 'logo',
+    requireAccountToVote: 'requireAccountToVote',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     creatorId: 'creatorId'
@@ -5905,6 +8043,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     projects?: ProjectListRelationFilter
+    posts?: PostListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5918,6 +8057,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     projects?: ProjectOrderByRelationAggregateInput
+    posts?: PostOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -5995,19 +8135,25 @@ export namespace Prisma {
     NOT?: Enumerable<ProjectWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
+    logo?: StringNullableFilter | string | null
+    requireAccountToVote?: BoolFilter | boolean
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
     creator?: XOR<UserRelationFilter, UserWhereInput>
+    posts?: PostListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    logo?: SortOrder
+    requireAccountToVote?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
     creator?: UserOrderByWithRelationInput
+    posts?: PostOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = {
@@ -6017,6 +8163,8 @@ export namespace Prisma {
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    logo?: SortOrder
+    requireAccountToVote?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
@@ -6031,9 +8179,123 @@ export namespace Prisma {
     NOT?: Enumerable<ProjectScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     name?: StringWithAggregatesFilter | string
+    logo?: StringNullableWithAggregatesFilter | string | null
+    requireAccountToVote?: BoolWithAggregatesFilter | boolean
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
     creatorId?: StringWithAggregatesFilter | string
+  }
+
+  export type PostWhereInput = {
+    AND?: Enumerable<PostWhereInput>
+    OR?: Enumerable<PostWhereInput>
+    NOT?: Enumerable<PostWhereInput>
+    id?: StringFilter | string
+    title?: StringFilter | string
+    description?: StringNullableFilter | string | null
+    upvotes?: IntFilter | number
+    downvotes?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    creatorId?: StringFilter | string
+    projectId?: StringFilter | string
+    creator?: XOR<UserRelationFilter, UserWhereInput>
+    project?: XOR<ProjectRelationFilter, ProjectWhereInput>
+    images?: ImageListRelationFilter
+  }
+
+  export type PostOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    projectId?: SortOrder
+    creator?: UserOrderByWithRelationInput
+    project?: ProjectOrderByWithRelationInput
+    images?: ImageOrderByRelationAggregateInput
+  }
+
+  export type PostWhereUniqueInput = {
+    id?: string
+  }
+
+  export type PostOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    projectId?: SortOrder
+    _count?: PostCountOrderByAggregateInput
+    _avg?: PostAvgOrderByAggregateInput
+    _max?: PostMaxOrderByAggregateInput
+    _min?: PostMinOrderByAggregateInput
+    _sum?: PostSumOrderByAggregateInput
+  }
+
+  export type PostScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<PostScalarWhereWithAggregatesInput>
+    OR?: Enumerable<PostScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<PostScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    title?: StringWithAggregatesFilter | string
+    description?: StringNullableWithAggregatesFilter | string | null
+    upvotes?: IntWithAggregatesFilter | number
+    downvotes?: IntWithAggregatesFilter | number
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    creatorId?: StringWithAggregatesFilter | string
+    projectId?: StringWithAggregatesFilter | string
+  }
+
+  export type ImageWhereInput = {
+    AND?: Enumerable<ImageWhereInput>
+    OR?: Enumerable<ImageWhereInput>
+    NOT?: Enumerable<ImageWhereInput>
+    id?: StringFilter | string
+    url?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    postId?: StringFilter | string
+    post?: XOR<PostRelationFilter, PostWhereInput>
+  }
+
+  export type ImageOrderByWithRelationInput = {
+    id?: SortOrder
+    url?: SortOrder
+    createdAt?: SortOrder
+    postId?: SortOrder
+    post?: PostOrderByWithRelationInput
+  }
+
+  export type ImageWhereUniqueInput = {
+    id?: string
+  }
+
+  export type ImageOrderByWithAggregationInput = {
+    id?: SortOrder
+    url?: SortOrder
+    createdAt?: SortOrder
+    postId?: SortOrder
+    _count?: ImageCountOrderByAggregateInput
+    _max?: ImageMaxOrderByAggregateInput
+    _min?: ImageMinOrderByAggregateInput
+  }
+
+  export type ImageScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<ImageScalarWhereWithAggregatesInput>
+    OR?: Enumerable<ImageScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<ImageScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    url?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    postId?: StringWithAggregatesFilter | string
   }
 
   export type AccountCreateInput = {
@@ -6213,6 +8475,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
+    posts?: PostCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6226,6 +8489,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUpdateInput = {
@@ -6239,6 +8503,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
+    posts?: PostUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6252,6 +8517,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6329,38 +8595,52 @@ export namespace Prisma {
   export type ProjectCreateInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     creator: UserCreateNestedOneWithoutProjectsInput
+    posts?: PostCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
+    posts?: PostUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    posts?: PostUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
+    posts?: PostUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
@@ -6369,6 +8649,8 @@ export namespace Prisma {
   export type ProjectUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6376,9 +8658,145 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PostCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: UserCreateNestedOneWithoutPostsInput
+    project: ProjectCreateNestedOneWithoutPostsInput
+    images?: ImageCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUncheckedCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    projectId: string
+    images?: ImageUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutPostsNestedInput
+    project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
+    images?: ImageUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostCreateManyInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    projectId: string
+  }
+
+  export type PostUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ImageCreateInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+    post: PostCreateNestedOneWithoutImagesInput
+  }
+
+  export type ImageUncheckedCreateInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+    postId: string
+  }
+
+  export type ImageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: PostUpdateOneRequiredWithoutImagesNestedInput
+  }
+
+  export type ImageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    postId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ImageCreateManyInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+    postId: string
+  }
+
+  export type ImageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ImageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    postId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter = {
@@ -6614,6 +9032,12 @@ export namespace Prisma {
     none?: ProjectWhereInput
   }
 
+  export type PostListRelationFilter = {
+    every?: PostWhereInput
+    some?: PostWhereInput
+    none?: PostWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -6623,6 +9047,10 @@ export namespace Prisma {
   }
 
   export type ProjectOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PostOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6693,9 +9121,16 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type BoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logo?: SortOrder
+    requireAccountToVote?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
@@ -6704,6 +9139,8 @@ export namespace Prisma {
   export type ProjectMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logo?: SortOrder
+    requireAccountToVote?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
@@ -6712,9 +9149,133 @@ export namespace Prisma {
   export type ProjectMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    logo?: SortOrder
+    requireAccountToVote?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
+  }
+
+  export type IntFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntFilter | number
+  }
+
+  export type ProjectRelationFilter = {
+    is?: ProjectWhereInput
+    isNot?: ProjectWhereInput
+  }
+
+  export type ImageListRelationFilter = {
+    every?: ImageWhereInput
+    some?: ImageWhereInput
+    none?: ImageWhereInput
+  }
+
+  export type ImageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PostCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    projectId?: SortOrder
+  }
+
+  export type PostAvgOrderByAggregateInput = {
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+  }
+
+  export type PostMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    projectId?: SortOrder
+  }
+
+  export type PostMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    creatorId?: SortOrder
+    projectId?: SortOrder
+  }
+
+  export type PostSumOrderByAggregateInput = {
+    upvotes?: SortOrder
+    downvotes?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntWithAggregatesFilter | number
+    _count?: NestedIntFilter
+    _avg?: NestedFloatFilter
+    _sum?: NestedIntFilter
+    _min?: NestedIntFilter
+    _max?: NestedIntFilter
+  }
+
+  export type PostRelationFilter = {
+    is?: PostWhereInput
+    isNot?: PostWhereInput
+  }
+
+  export type ImageCountOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    createdAt?: SortOrder
+    postId?: SortOrder
+  }
+
+  export type ImageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    createdAt?: SortOrder
+    postId?: SortOrder
+  }
+
+  export type ImageMinOrderByAggregateInput = {
+    id?: SortOrder
+    url?: SortOrder
+    createdAt?: SortOrder
+    postId?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -6786,6 +9347,13 @@ export namespace Prisma {
     connect?: Enumerable<ProjectWhereUniqueInput>
   }
 
+  export type PostCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<PostCreateWithoutCreatorInput>, Enumerable<PostUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCreatorInput>
+    createMany?: PostCreateManyCreatorInputEnvelope
+    connect?: Enumerable<PostWhereUniqueInput>
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -6805,6 +9373,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCreatorInput>
     createMany?: ProjectCreateManyCreatorInputEnvelope
     connect?: Enumerable<ProjectWhereUniqueInput>
+  }
+
+  export type PostUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<PostCreateWithoutCreatorInput>, Enumerable<PostUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCreatorInput>
+    createMany?: PostCreateManyCreatorInputEnvelope
+    connect?: Enumerable<PostWhereUniqueInput>
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -6853,6 +9428,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<ProjectScalarWhereInput>
   }
 
+  export type PostUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<PostCreateWithoutCreatorInput>, Enumerable<PostUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: PostCreateManyCreatorInputEnvelope
+    set?: Enumerable<PostWhereUniqueInput>
+    disconnect?: Enumerable<PostWhereUniqueInput>
+    delete?: Enumerable<PostWhereUniqueInput>
+    connect?: Enumerable<PostWhereUniqueInput>
+    update?: Enumerable<PostUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutCreatorInput>
+    deleteMany?: Enumerable<PostScalarWhereInput>
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -6895,10 +9484,42 @@ export namespace Prisma {
     deleteMany?: Enumerable<ProjectScalarWhereInput>
   }
 
+  export type PostUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<PostCreateWithoutCreatorInput>, Enumerable<PostUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: PostCreateManyCreatorInputEnvelope
+    set?: Enumerable<PostWhereUniqueInput>
+    disconnect?: Enumerable<PostWhereUniqueInput>
+    delete?: Enumerable<PostWhereUniqueInput>
+    connect?: Enumerable<PostWhereUniqueInput>
+    update?: Enumerable<PostUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutCreatorInput>
+    deleteMany?: Enumerable<PostScalarWhereInput>
+  }
+
   export type UserCreateNestedOneWithoutProjectsInput = {
     create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type PostCreateNestedManyWithoutProjectInput = {
+    create?: XOR<Enumerable<PostCreateWithoutProjectInput>, Enumerable<PostUncheckedCreateWithoutProjectInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutProjectInput>
+    createMany?: PostCreateManyProjectInputEnvelope
+    connect?: Enumerable<PostWhereUniqueInput>
+  }
+
+  export type PostUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<Enumerable<PostCreateWithoutProjectInput>, Enumerable<PostUncheckedCreateWithoutProjectInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutProjectInput>
+    createMany?: PostCreateManyProjectInputEnvelope
+    connect?: Enumerable<PostWhereUniqueInput>
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
@@ -6907,6 +9528,126 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutProjectsInput
     connect?: UserWhereUniqueInput
     update?: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
+  }
+
+  export type PostUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<Enumerable<PostCreateWithoutProjectInput>, Enumerable<PostUncheckedCreateWithoutProjectInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutProjectInput>
+    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutProjectInput>
+    createMany?: PostCreateManyProjectInputEnvelope
+    set?: Enumerable<PostWhereUniqueInput>
+    disconnect?: Enumerable<PostWhereUniqueInput>
+    delete?: Enumerable<PostWhereUniqueInput>
+    connect?: Enumerable<PostWhereUniqueInput>
+    update?: Enumerable<PostUpdateWithWhereUniqueWithoutProjectInput>
+    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutProjectInput>
+    deleteMany?: Enumerable<PostScalarWhereInput>
+  }
+
+  export type PostUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<Enumerable<PostCreateWithoutProjectInput>, Enumerable<PostUncheckedCreateWithoutProjectInput>>
+    connectOrCreate?: Enumerable<PostCreateOrConnectWithoutProjectInput>
+    upsert?: Enumerable<PostUpsertWithWhereUniqueWithoutProjectInput>
+    createMany?: PostCreateManyProjectInputEnvelope
+    set?: Enumerable<PostWhereUniqueInput>
+    disconnect?: Enumerable<PostWhereUniqueInput>
+    delete?: Enumerable<PostWhereUniqueInput>
+    connect?: Enumerable<PostWhereUniqueInput>
+    update?: Enumerable<PostUpdateWithWhereUniqueWithoutProjectInput>
+    updateMany?: Enumerable<PostUpdateManyWithWhereWithoutProjectInput>
+    deleteMany?: Enumerable<PostScalarWhereInput>
+  }
+
+  export type UserCreateNestedOneWithoutPostsInput = {
+    create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPostsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectCreateNestedOneWithoutPostsInput = {
+    create?: XOR<ProjectCreateWithoutPostsInput, ProjectUncheckedCreateWithoutPostsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutPostsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type ImageCreateNestedManyWithoutPostInput = {
+    create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
+    createMany?: ImageCreateManyPostInputEnvelope
+    connect?: Enumerable<ImageWhereUniqueInput>
+  }
+
+  export type ImageUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
+    createMany?: ImageCreateManyPostInputEnvelope
+    connect?: Enumerable<ImageWhereUniqueInput>
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutPostsNestedInput = {
+    create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPostsInput
+    upsert?: UserUpsertWithoutPostsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
+  }
+
+  export type ProjectUpdateOneRequiredWithoutPostsNestedInput = {
+    create?: XOR<ProjectCreateWithoutPostsInput, ProjectUncheckedCreateWithoutPostsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutPostsInput
+    upsert?: ProjectUpsertWithoutPostsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<ProjectUpdateWithoutPostsInput, ProjectUncheckedUpdateWithoutPostsInput>
+  }
+
+  export type ImageUpdateManyWithoutPostNestedInput = {
+    create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
+    upsert?: Enumerable<ImageUpsertWithWhereUniqueWithoutPostInput>
+    createMany?: ImageCreateManyPostInputEnvelope
+    set?: Enumerable<ImageWhereUniqueInput>
+    disconnect?: Enumerable<ImageWhereUniqueInput>
+    delete?: Enumerable<ImageWhereUniqueInput>
+    connect?: Enumerable<ImageWhereUniqueInput>
+    update?: Enumerable<ImageUpdateWithWhereUniqueWithoutPostInput>
+    updateMany?: Enumerable<ImageUpdateManyWithWhereWithoutPostInput>
+    deleteMany?: Enumerable<ImageScalarWhereInput>
+  }
+
+  export type ImageUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<Enumerable<ImageCreateWithoutPostInput>, Enumerable<ImageUncheckedCreateWithoutPostInput>>
+    connectOrCreate?: Enumerable<ImageCreateOrConnectWithoutPostInput>
+    upsert?: Enumerable<ImageUpsertWithWhereUniqueWithoutPostInput>
+    createMany?: ImageCreateManyPostInputEnvelope
+    set?: Enumerable<ImageWhereUniqueInput>
+    disconnect?: Enumerable<ImageWhereUniqueInput>
+    delete?: Enumerable<ImageWhereUniqueInput>
+    connect?: Enumerable<ImageWhereUniqueInput>
+    update?: Enumerable<ImageUpdateWithWhereUniqueWithoutPostInput>
+    updateMany?: Enumerable<ImageUpdateManyWithWhereWithoutPostInput>
+    deleteMany?: Enumerable<ImageScalarWhereInput>
+  }
+
+  export type PostCreateNestedOneWithoutImagesInput = {
+    create?: XOR<PostCreateWithoutImagesInput, PostUncheckedCreateWithoutImagesInput>
+    connectOrCreate?: PostCreateOrConnectWithoutImagesInput
+    connect?: PostWhereUniqueInput
+  }
+
+  export type PostUpdateOneRequiredWithoutImagesNestedInput = {
+    create?: XOR<PostCreateWithoutImagesInput, PostUncheckedCreateWithoutImagesInput>
+    connectOrCreate?: PostCreateOrConnectWithoutImagesInput
+    upsert?: PostUpsertWithoutImagesInput
+    connect?: PostWhereUniqueInput
+    update?: XOR<PostUpdateWithoutImagesInput, PostUncheckedUpdateWithoutImagesInput>
   }
 
   export type NestedStringFilter = {
@@ -7070,6 +9811,46 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter
   }
 
+  export type NestedBoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
+  }
+
+  export type NestedIntWithAggregatesFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntWithAggregatesFilter | number
+    _count?: NestedIntFilter
+    _avg?: NestedFloatFilter
+    _sum?: NestedIntFilter
+    _min?: NestedIntFilter
+    _max?: NestedIntFilter
+  }
+
+  export type NestedFloatFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatFilter | number
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -7080,6 +9861,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
+    posts?: PostCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -7092,6 +9874,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -7114,6 +9897,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
+    posts?: PostUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -7126,6 +9910,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -7138,6 +9923,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     projects?: ProjectCreateNestedManyWithoutCreatorInput
+    posts?: PostCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -7150,6 +9936,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -7172,6 +9959,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     projects?: ProjectUpdateManyWithoutCreatorNestedInput
+    posts?: PostUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -7184,6 +9972,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -7253,15 +10042,21 @@ export namespace Prisma {
   export type ProjectCreateWithoutCreatorInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    posts?: PostCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutCreatorInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    posts?: PostUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutCreatorInput = {
@@ -7271,6 +10066,40 @@ export namespace Prisma {
 
   export type ProjectCreateManyCreatorInputEnvelope = {
     data: Enumerable<ProjectCreateManyCreatorInput>
+    skipDuplicates?: boolean
+  }
+
+  export type PostCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutPostsInput
+    images?: ImageCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projectId: string
+    images?: ImageUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type PostCreateOrConnectWithoutCreatorInput = {
+    where: PostWhereUniqueInput
+    create: XOR<PostCreateWithoutCreatorInput, PostUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PostCreateManyCreatorInputEnvelope = {
+    data: Enumerable<PostCreateManyCreatorInput>
     skipDuplicates?: boolean
   }
 
@@ -7358,9 +10187,42 @@ export namespace Prisma {
     NOT?: Enumerable<ProjectScalarWhereInput>
     id?: StringFilter | string
     name?: StringFilter | string
+    logo?: StringNullableFilter | string | null
+    requireAccountToVote?: BoolFilter | boolean
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
+  }
+
+  export type PostUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: PostWhereUniqueInput
+    update: XOR<PostUpdateWithoutCreatorInput, PostUncheckedUpdateWithoutCreatorInput>
+    create: XOR<PostCreateWithoutCreatorInput, PostUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PostUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: PostWhereUniqueInput
+    data: XOR<PostUpdateWithoutCreatorInput, PostUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type PostUpdateManyWithWhereWithoutCreatorInput = {
+    where: PostScalarWhereInput
+    data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyWithoutPostsInput>
+  }
+
+  export type PostScalarWhereInput = {
+    AND?: Enumerable<PostScalarWhereInput>
+    OR?: Enumerable<PostScalarWhereInput>
+    NOT?: Enumerable<PostScalarWhereInput>
+    id?: StringFilter | string
+    title?: StringFilter | string
+    description?: StringNullableFilter | string | null
+    upvotes?: IntFilter | number
+    downvotes?: IntFilter | number
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    creatorId?: StringFilter | string
+    projectId?: StringFilter | string
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -7373,6 +10235,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -7385,11 +10248,46 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
+  }
+
+  export type PostCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: UserCreateNestedOneWithoutPostsInput
+    images?: ImageCreateNestedManyWithoutPostInput
+  }
+
+  export type PostUncheckedCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    images?: ImageUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type PostCreateOrConnectWithoutProjectInput = {
+    where: PostWhereUniqueInput
+    create: XOR<PostCreateWithoutProjectInput, PostUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PostCreateManyProjectInputEnvelope = {
+    data: Enumerable<PostCreateManyProjectInput>
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutProjectsInput = {
@@ -7407,6 +10305,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -7419,6 +10318,241 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type PostUpsertWithWhereUniqueWithoutProjectInput = {
+    where: PostWhereUniqueInput
+    update: XOR<PostUpdateWithoutProjectInput, PostUncheckedUpdateWithoutProjectInput>
+    create: XOR<PostCreateWithoutProjectInput, PostUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PostUpdateWithWhereUniqueWithoutProjectInput = {
+    where: PostWhereUniqueInput
+    data: XOR<PostUpdateWithoutProjectInput, PostUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type PostUpdateManyWithWhereWithoutProjectInput = {
+    where: PostScalarWhereInput
+    data: XOR<PostUpdateManyMutationInput, PostUncheckedUpdateManyWithoutPostsInput>
+  }
+
+  export type UserCreateWithoutPostsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    projects?: ProjectCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserUncheckedCreateWithoutPostsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type UserCreateOrConnectWithoutPostsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
+  }
+
+  export type ProjectCreateWithoutPostsInput = {
+    id?: string
+    name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: UserCreateNestedOneWithoutProjectsInput
+  }
+
+  export type ProjectUncheckedCreateWithoutPostsInput = {
+    id?: string
+    name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+  }
+
+  export type ProjectCreateOrConnectWithoutPostsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutPostsInput, ProjectUncheckedCreateWithoutPostsInput>
+  }
+
+  export type ImageCreateWithoutPostInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+  }
+
+  export type ImageUncheckedCreateWithoutPostInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+  }
+
+  export type ImageCreateOrConnectWithoutPostInput = {
+    where: ImageWhereUniqueInput
+    create: XOR<ImageCreateWithoutPostInput, ImageUncheckedCreateWithoutPostInput>
+  }
+
+  export type ImageCreateManyPostInputEnvelope = {
+    data: Enumerable<ImageCreateManyPostInput>
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutPostsInput = {
+    update: XOR<UserUpdateWithoutPostsInput, UserUncheckedUpdateWithoutPostsInput>
+    create: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
+  }
+
+  export type UserUpdateWithoutPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    projects?: ProjectUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type ProjectUpsertWithoutPostsInput = {
+    update: XOR<ProjectUpdateWithoutPostsInput, ProjectUncheckedUpdateWithoutPostsInput>
+    create: XOR<ProjectCreateWithoutPostsInput, ProjectUncheckedCreateWithoutPostsInput>
+  }
+
+  export type ProjectUpdateWithoutPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutProjectsNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ImageUpsertWithWhereUniqueWithoutPostInput = {
+    where: ImageWhereUniqueInput
+    update: XOR<ImageUpdateWithoutPostInput, ImageUncheckedUpdateWithoutPostInput>
+    create: XOR<ImageCreateWithoutPostInput, ImageUncheckedCreateWithoutPostInput>
+  }
+
+  export type ImageUpdateWithWhereUniqueWithoutPostInput = {
+    where: ImageWhereUniqueInput
+    data: XOR<ImageUpdateWithoutPostInput, ImageUncheckedUpdateWithoutPostInput>
+  }
+
+  export type ImageUpdateManyWithWhereWithoutPostInput = {
+    where: ImageScalarWhereInput
+    data: XOR<ImageUpdateManyMutationInput, ImageUncheckedUpdateManyWithoutImagesInput>
+  }
+
+  export type ImageScalarWhereInput = {
+    AND?: Enumerable<ImageScalarWhereInput>
+    OR?: Enumerable<ImageScalarWhereInput>
+    NOT?: Enumerable<ImageScalarWhereInput>
+    id?: StringFilter | string
+    url?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    postId?: StringFilter | string
+  }
+
+  export type PostCreateWithoutImagesInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator: UserCreateNestedOneWithoutPostsInput
+    project: ProjectCreateNestedOneWithoutPostsInput
+  }
+
+  export type PostUncheckedCreateWithoutImagesInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    projectId: string
+  }
+
+  export type PostCreateOrConnectWithoutImagesInput = {
+    where: PostWhereUniqueInput
+    create: XOR<PostCreateWithoutImagesInput, PostUncheckedCreateWithoutImagesInput>
+  }
+
+  export type PostUpsertWithoutImagesInput = {
+    update: XOR<PostUpdateWithoutImagesInput, PostUncheckedUpdateWithoutImagesInput>
+    create: XOR<PostCreateWithoutImagesInput, PostUncheckedCreateWithoutImagesInput>
+  }
+
+  export type PostUpdateWithoutImagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutPostsNestedInput
+    project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
+  }
+
+  export type PostUncheckedUpdateWithoutImagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AccountCreateManyUserInput = {
@@ -7446,8 +10580,21 @@ export namespace Prisma {
   export type ProjectCreateManyCreatorInput = {
     id?: string
     name: string
+    logo?: string | null
+    requireAccountToVote?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type PostCreateManyCreatorInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projectId: string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -7519,22 +10666,124 @@ export namespace Prisma {
   export type ProjectUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    posts?: PostUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    requireAccountToVote?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PostUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutPostsNestedInput
+    images?: ImageUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateManyWithoutPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projectId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PostCreateManyProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    upvotes: number
+    downvotes: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+  }
+
+  export type PostUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutPostsNestedInput
+    images?: ImageUpdateManyWithoutPostNestedInput
+  }
+
+  export type PostUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    upvotes?: IntFieldUpdateOperationsInput | number
+    downvotes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    images?: ImageUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type ImageCreateManyPostInput = {
+    id?: string
+    url: string
+    createdAt?: Date | string
+  }
+
+  export type ImageUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ImageUncheckedUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ImageUncheckedUpdateManyWithoutImagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
