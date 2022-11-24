@@ -60,8 +60,8 @@ Toast.Description = function ToastDescription({
 };
 
 interface ToastOpts {
-  title?: string;
-  message: string;
+  title: string;
+  message?: string;
   type?: "success" | "error" | "default";
   duration?: number;
 }

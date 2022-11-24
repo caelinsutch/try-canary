@@ -9,7 +9,7 @@ type ProjectItemProps = {
   post: Pick<Project, "id" | "name" | "createdAt">;
 };
 
-export const ProjectItem: React.FC<ProjectItemProps> = ({ post }) => (
+export const ProjectItem = ({ post }: ProjectItemProps): React.ReactNode => (
   <div className="flex items-center justify-between p-4">
     <div className="grid gap-1">
       <Link

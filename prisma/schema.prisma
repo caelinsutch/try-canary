@@ -56,7 +56,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
-  company     Company[]
+  projects     Project[]
 
   @@map(name: "users")
 }
@@ -70,20 +70,6 @@ model VerificationToken {
   @@map(name: "verification_tokens")
 }
 
-model Company {
-  id        String   @id @default(cuid())
-  name     String
-
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @default(now()) @map(name: "updated_at")
-  creatorId  String
-
-  creator User @relation(fields: [creatorId], references: [id])
-  projects Project[]
-
-  @@map(name: "posts")
-}
-
 model Project {
       id        String   @id @default(cuid())
       name     String
@@ -91,9 +77,8 @@ model Project {
       createdAt DateTime @default(now()) @map(name: "created_at")
       updatedAt DateTime @default(now()) @map(name: "updated_at")
       creatorId  String
-      companyId String
 
-      company Company @relation(fields: [companyId], references: [id])
+        creator User @relation(fields: [creatorId], references: [id])
 
       @@map(name: "projects")
 }

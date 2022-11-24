@@ -69,18 +69,6 @@ export type VerificationToken = {
 }
 
 /**
- * Model Company
- * 
- */
-export type Company = {
-  id: string
-  name: string
-  createdAt: Date
-  updatedAt: Date
-  creatorId: string
-}
-
-/**
  * Model Project
  * 
  */
@@ -90,7 +78,6 @@ export type Project = {
   createdAt: Date
   updatedAt: Date
   creatorId: string
-  companyId: string
 }
 
 
@@ -273,16 +260,6 @@ export class PrismaClient<
     * ```
     */
   get verificationToken(): Prisma.VerificationTokenDelegate<GlobalReject>;
-
-  /**
-   * `prisma.company`: Exposes CRUD operations for the **Company** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Companies
-    * const companies = await prisma.company.findMany()
-    * ```
-    */
-  get company(): Prisma.CompanyDelegate<GlobalReject>;
 
   /**
    * `prisma.project`: Exposes CRUD operations for the **Project** model.
@@ -785,7 +762,6 @@ export namespace Prisma {
     Session: 'Session',
     User: 'User',
     VerificationToken: 'VerificationToken',
-    Company: 'Company',
     Project: 'Project'
   };
 
@@ -953,13 +929,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
-    company: number
+    projects: number
   }
 
   export type UserCountOutputTypeSelect = {
     accounts?: boolean
     sessions?: boolean
-    company?: boolean
+    projects?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<
@@ -994,55 +970,6 @@ export namespace Prisma {
      * 
     **/
     select?: UserCountOutputTypeSelect | null
-  }
-
-
-
-  /**
-   * Count Type CompanyCountOutputType
-   */
-
-
-  export type CompanyCountOutputType = {
-    projects: number
-  }
-
-  export type CompanyCountOutputTypeSelect = {
-    projects?: boolean
-  }
-
-  export type CompanyCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | CompanyCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? CompanyCountOutputType
-    : S extends undefined
-    ? never
-    : S extends CompanyCountOutputTypeArgs
-    ?'include' extends U
-    ? CompanyCountOutputType 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-    P extends keyof CompanyCountOutputType ? CompanyCountOutputType[P] : never
-  } 
-    : CompanyCountOutputType
-  : CompanyCountOutputType
-
-
-
-
-  // Custom InputTypes
-
-  /**
-   * CompanyCountOutputType without action
-   */
-  export type CompanyCountOutputTypeArgs = {
-    /**
-     * Select specific fields to fetch from the CompanyCountOutputType
-     * 
-    **/
-    select?: CompanyCountOutputTypeSelect | null
   }
 
 
@@ -3188,14 +3115,14 @@ export namespace Prisma {
     updatedAt?: boolean
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
-    company?: boolean | CompanyFindManyArgs
+    projects?: boolean | ProjectFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
   export type UserInclude = {
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
-    company?: boolean | CompanyFindManyArgs
+    projects?: boolean | ProjectFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -3212,7 +3139,7 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'company' ? Array < CompanyGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
@@ -3220,7 +3147,7 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'company' ? Array < CompanyGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
   } 
     : User
@@ -3600,7 +3527,7 @@ export namespace Prisma {
 
     sessions<T extends SessionFindManyArgs = {}>(args?: Subset<T, SessionFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Session>| Null>, PrismaPromise<Array<SessionGetPayload<T>>| Null>>;
 
-    company<T extends CompanyFindManyArgs = {}>(args?: Subset<T, CompanyFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Company>| Null>, PrismaPromise<Array<CompanyGetPayload<T>>| Null>>;
+    projects<T extends ProjectFindManyArgs = {}>(args?: Subset<T, ProjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Project>| Null>, PrismaPromise<Array<ProjectGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -4817,941 +4744,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Company
-   */
-
-
-  export type AggregateCompany = {
-    _count: CompanyCountAggregateOutputType | null
-    _min: CompanyMinAggregateOutputType | null
-    _max: CompanyMaxAggregateOutputType | null
-  }
-
-  export type CompanyMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    creatorId: string | null
-  }
-
-  export type CompanyMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    creatorId: string | null
-  }
-
-  export type CompanyCountAggregateOutputType = {
-    id: number
-    name: number
-    createdAt: number
-    updatedAt: number
-    creatorId: number
-    _all: number
-  }
-
-
-  export type CompanyMinAggregateInputType = {
-    id?: true
-    name?: true
-    createdAt?: true
-    updatedAt?: true
-    creatorId?: true
-  }
-
-  export type CompanyMaxAggregateInputType = {
-    id?: true
-    name?: true
-    createdAt?: true
-    updatedAt?: true
-    creatorId?: true
-  }
-
-  export type CompanyCountAggregateInputType = {
-    id?: true
-    name?: true
-    createdAt?: true
-    updatedAt?: true
-    creatorId?: true
-    _all?: true
-  }
-
-  export type CompanyAggregateArgs = {
-    /**
-     * Filter which Company to aggregate.
-     * 
-    **/
-    where?: CompanyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Companies to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<CompanyOrderByWithRelationInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     * 
-    **/
-    cursor?: CompanyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Companies from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Companies.
-     * 
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Companies
-    **/
-    _count?: true | CompanyCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CompanyMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CompanyMaxAggregateInputType
-  }
-
-  export type GetCompanyAggregateType<T extends CompanyAggregateArgs> = {
-        [P in keyof T & keyof AggregateCompany]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCompany[P]>
-      : GetScalarType<T[P], AggregateCompany[P]>
-  }
-
-
-
-
-  export type CompanyGroupByArgs = {
-    where?: CompanyWhereInput
-    orderBy?: Enumerable<CompanyOrderByWithAggregationInput>
-    by: Array<CompanyScalarFieldEnum>
-    having?: CompanyScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CompanyCountAggregateInputType | true
-    _min?: CompanyMinAggregateInputType
-    _max?: CompanyMaxAggregateInputType
-  }
-
-
-  export type CompanyGroupByOutputType = {
-    id: string
-    name: string
-    createdAt: Date
-    updatedAt: Date
-    creatorId: string
-    _count: CompanyCountAggregateOutputType | null
-    _min: CompanyMinAggregateOutputType | null
-    _max: CompanyMaxAggregateOutputType | null
-  }
-
-  type GetCompanyGroupByPayload<T extends CompanyGroupByArgs> = PrismaPromise<
-    Array<
-      PickArray<CompanyGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CompanyGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CompanyGroupByOutputType[P]>
-            : GetScalarType<T[P], CompanyGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type CompanySelect = {
-    id?: boolean
-    name?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    creatorId?: boolean
-    creator?: boolean | UserArgs
-    projects?: boolean | ProjectFindManyArgs
-    _count?: boolean | CompanyCountOutputTypeArgs
-  }
-
-  export type CompanyInclude = {
-    creator?: boolean | UserArgs
-    projects?: boolean | ProjectFindManyArgs
-    _count?: boolean | CompanyCountOutputTypeArgs
-  }
-
-  export type CompanyGetPayload<
-    S extends boolean | null | undefined | CompanyArgs,
-    U = keyof S
-      > = S extends true
-        ? Company
-    : S extends undefined
-    ? never
-    : S extends CompanyArgs | CompanyFindManyArgs
-    ?'include' extends U
-    ? Company  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? CompanyCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
-  } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'projects' ? Array < ProjectGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? CompanyCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Company ? Company[P] : never
-  } 
-    : Company
-  : Company
-
-
-  type CompanyCountArgs = Merge<
-    Omit<CompanyFindManyArgs, 'select' | 'include'> & {
-      select?: CompanyCountAggregateInputType | true
-    }
-  >
-
-  export interface CompanyDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
-    /**
-     * Find zero or one Company that matches the filter.
-     * @param {CompanyFindUniqueArgs} args - Arguments to find a Company
-     * @example
-     * // Get one Company
-     * const company = await prisma.company.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUnique<T extends CompanyFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args: SelectSubset<T, CompanyFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Company'> extends True ? CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>> : CheckSelect<T, Prisma__CompanyClient<Company | null, null>, Prisma__CompanyClient<CompanyGetPayload<T> | null, null>>
-
-    /**
-     * Find the first Company that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyFindFirstArgs} args - Arguments to find a Company
-     * @example
-     * // Get one Company
-     * const company = await prisma.company.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirst<T extends CompanyFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args?: SelectSubset<T, CompanyFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Company'> extends True ? CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>> : CheckSelect<T, Prisma__CompanyClient<Company | null, null>, Prisma__CompanyClient<CompanyGetPayload<T> | null, null>>
-
-    /**
-     * Find zero or more Companies that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyFindManyArgs=} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Companies
-     * const companies = await prisma.company.findMany()
-     * 
-     * // Get first 10 Companies
-     * const companies = await prisma.company.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const companyWithIdOnly = await prisma.company.findMany({ select: { id: true } })
-     * 
-    **/
-    findMany<T extends CompanyFindManyArgs>(
-      args?: SelectSubset<T, CompanyFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Company>>, PrismaPromise<Array<CompanyGetPayload<T>>>>
-
-    /**
-     * Create a Company.
-     * @param {CompanyCreateArgs} args - Arguments to create a Company.
-     * @example
-     * // Create one Company
-     * const Company = await prisma.company.create({
-     *   data: {
-     *     // ... data to create a Company
-     *   }
-     * })
-     * 
-    **/
-    create<T extends CompanyCreateArgs>(
-      args: SelectSubset<T, CompanyCreateArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Create many Companies.
-     *     @param {CompanyCreateManyArgs} args - Arguments to create many Companies.
-     *     @example
-     *     // Create many Companies
-     *     const company = await prisma.company.createMany({
-     *       data: {
-     *         // ... provide data here
-     *       }
-     *     })
-     *     
-    **/
-    createMany<T extends CompanyCreateManyArgs>(
-      args?: SelectSubset<T, CompanyCreateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a Company.
-     * @param {CompanyDeleteArgs} args - Arguments to delete one Company.
-     * @example
-     * // Delete one Company
-     * const Company = await prisma.company.delete({
-     *   where: {
-     *     // ... filter to delete one Company
-     *   }
-     * })
-     * 
-    **/
-    delete<T extends CompanyDeleteArgs>(
-      args: SelectSubset<T, CompanyDeleteArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Update one Company.
-     * @param {CompanyUpdateArgs} args - Arguments to update one Company.
-     * @example
-     * // Update one Company
-     * const company = await prisma.company.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    update<T extends CompanyUpdateArgs>(
-      args: SelectSubset<T, CompanyUpdateArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Delete zero or more Companies.
-     * @param {CompanyDeleteManyArgs} args - Arguments to filter Companies to delete.
-     * @example
-     * // Delete a few Companies
-     * const { count } = await prisma.company.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-    **/
-    deleteMany<T extends CompanyDeleteManyArgs>(
-      args?: SelectSubset<T, CompanyDeleteManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Companies.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Companies
-     * const company = await prisma.company.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    updateMany<T extends CompanyUpdateManyArgs>(
-      args: SelectSubset<T, CompanyUpdateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Company.
-     * @param {CompanyUpsertArgs} args - Arguments to update or create a Company.
-     * @example
-     * // Update or create a Company
-     * const company = await prisma.company.upsert({
-     *   create: {
-     *     // ... data to create a Company
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Company we want to update
-     *   }
-     * })
-    **/
-    upsert<T extends CompanyUpsertArgs>(
-      args: SelectSubset<T, CompanyUpsertArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Find one Company that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {CompanyFindUniqueOrThrowArgs} args - Arguments to find a Company
-     * @example
-     * // Get one Company
-     * const company = await prisma.company.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends CompanyFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, CompanyFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Find the first Company that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyFindFirstOrThrowArgs} args - Arguments to find a Company
-     * @example
-     * // Get one Company
-     * const company = await prisma.company.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends CompanyFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, CompanyFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__CompanyClient<Company>, Prisma__CompanyClient<CompanyGetPayload<T>>>
-
-    /**
-     * Count the number of Companies.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyCountArgs} args - Arguments to filter Companies to count.
-     * @example
-     * // Count the number of Companies
-     * const count = await prisma.company.count({
-     *   where: {
-     *     // ... the filter for the Companies we want to count
-     *   }
-     * })
-    **/
-    count<T extends CompanyCountArgs>(
-      args?: Subset<T, CompanyCountArgs>,
-    ): PrismaPromise<
-      T extends _Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CompanyCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Company.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CompanyAggregateArgs>(args: Subset<T, CompanyAggregateArgs>): PrismaPromise<GetCompanyAggregateType<T>>
-
-    /**
-     * Group by Company.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CompanyGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends CompanyGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: CompanyGroupByArgs['orderBy'] }
-        : { orderBy?: CompanyGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends TupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, CompanyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCompanyGroupByPayload<T> : PrismaPromise<InputErrors>
-
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Company.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export class Prisma__CompanyClient<T, Null = never> implements PrismaPromise<T> {
-    [prisma]: true;
-    private readonly _dmmf;
-    private readonly _fetcher;
-    private readonly _queryType;
-    private readonly _rootField;
-    private readonly _clientMethod;
-    private readonly _args;
-    private readonly _dataPath;
-    private readonly _errorFormat;
-    private readonly _measurePerformance?;
-    private _isList;
-    private _callsite;
-    private _requestPromise?;
-    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
-    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-    creator<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
-
-    projects<T extends ProjectFindManyArgs = {}>(args?: Subset<T, ProjectFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Project>| Null>, PrismaPromise<Array<ProjectGetPayload<T>>| Null>>;
-
-    private get _document();
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-  }
-
-
-
-  // Custom InputTypes
-
-  /**
-   * Company base type for findUnique actions
-   */
-  export type CompanyFindUniqueArgsBase = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * Filter, which Company to fetch.
-     * 
-    **/
-    where: CompanyWhereUniqueInput
-  }
-
-  /**
-   * Company: findUnique
-   */
-  export interface CompanyFindUniqueArgs extends CompanyFindUniqueArgsBase {
-   /**
-    * Throw an Error if query returns no results
-    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
-    */
-    rejectOnNotFound?: RejectOnNotFound
-  }
-      
-
-  /**
-   * Company base type for findFirst actions
-   */
-  export type CompanyFindFirstArgsBase = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * Filter, which Company to fetch.
-     * 
-    **/
-    where?: CompanyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Companies to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<CompanyOrderByWithRelationInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Companies.
-     * 
-    **/
-    cursor?: CompanyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Companies from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Companies.
-     * 
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Companies.
-     * 
-    **/
-    distinct?: Enumerable<CompanyScalarFieldEnum>
-  }
-
-  /**
-   * Company: findFirst
-   */
-  export interface CompanyFindFirstArgs extends CompanyFindFirstArgsBase {
-   /**
-    * Throw an Error if query returns no results
-    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
-    */
-    rejectOnNotFound?: RejectOnNotFound
-  }
-      
-
-  /**
-   * Company findMany
-   */
-  export type CompanyFindManyArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * Filter, which Companies to fetch.
-     * 
-    **/
-    where?: CompanyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Companies to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<CompanyOrderByWithRelationInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Companies.
-     * 
-    **/
-    cursor?: CompanyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Companies from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Companies.
-     * 
-    **/
-    skip?: number
-    distinct?: Enumerable<CompanyScalarFieldEnum>
-  }
-
-
-  /**
-   * Company create
-   */
-  export type CompanyCreateArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * The data needed to create a Company.
-     * 
-    **/
-    data: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
-  }
-
-
-  /**
-   * Company createMany
-   */
-  export type CompanyCreateManyArgs = {
-    /**
-     * The data used to create many Companies.
-     * 
-    **/
-    data: Enumerable<CompanyCreateManyInput>
-    skipDuplicates?: boolean
-  }
-
-
-  /**
-   * Company update
-   */
-  export type CompanyUpdateArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * The data needed to update a Company.
-     * 
-    **/
-    data: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
-    /**
-     * Choose, which Company to update.
-     * 
-    **/
-    where: CompanyWhereUniqueInput
-  }
-
-
-  /**
-   * Company updateMany
-   */
-  export type CompanyUpdateManyArgs = {
-    /**
-     * The data used to update Companies.
-     * 
-    **/
-    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyInput>
-    /**
-     * Filter which Companies to update
-     * 
-    **/
-    where?: CompanyWhereInput
-  }
-
-
-  /**
-   * Company upsert
-   */
-  export type CompanyUpsertArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * The filter to search for the Company to update in case it exists.
-     * 
-    **/
-    where: CompanyWhereUniqueInput
-    /**
-     * In case the Company found by the `where` argument doesn't exist, create a new Company with this data.
-     * 
-    **/
-    create: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
-    /**
-     * In case the Company was found with the provided `where` argument, update it with this data.
-     * 
-    **/
-    update: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
-  }
-
-
-  /**
-   * Company delete
-   */
-  export type CompanyDeleteArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-    /**
-     * Filter which Company to delete.
-     * 
-    **/
-    where: CompanyWhereUniqueInput
-  }
-
-
-  /**
-   * Company deleteMany
-   */
-  export type CompanyDeleteManyArgs = {
-    /**
-     * Filter which Companies to delete
-     * 
-    **/
-    where?: CompanyWhereInput
-  }
-
-
-  /**
-   * Company: findUniqueOrThrow
-   */
-  export type CompanyFindUniqueOrThrowArgs = CompanyFindUniqueArgsBase
-      
-
-  /**
-   * Company: findFirstOrThrow
-   */
-  export type CompanyFindFirstOrThrowArgs = CompanyFindFirstArgsBase
-      
-
-  /**
-   * Company without action
-   */
-  export type CompanyArgs = {
-    /**
-     * Select specific fields to fetch from the Company
-     * 
-    **/
-    select?: CompanySelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: CompanyInclude | null
-  }
-
-
-
-  /**
    * Model Project
    */
 
@@ -5768,7 +4760,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
-    companyId: string | null
   }
 
   export type ProjectMaxAggregateOutputType = {
@@ -5777,7 +4768,6 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     creatorId: string | null
-    companyId: string | null
   }
 
   export type ProjectCountAggregateOutputType = {
@@ -5786,7 +4776,6 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     creatorId: number
-    companyId: number
     _all: number
   }
 
@@ -5797,7 +4786,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     creatorId?: true
-    companyId?: true
   }
 
   export type ProjectMaxAggregateInputType = {
@@ -5806,7 +4794,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     creatorId?: true
-    companyId?: true
   }
 
   export type ProjectCountAggregateInputType = {
@@ -5815,7 +4802,6 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     creatorId?: true
-    companyId?: true
     _all?: true
   }
 
@@ -5903,7 +4889,6 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     creatorId: string
-    companyId: string
     _count: ProjectCountAggregateOutputType | null
     _min: ProjectMinAggregateOutputType | null
     _max: ProjectMaxAggregateOutputType | null
@@ -5929,12 +4914,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     creatorId?: boolean
-    companyId?: boolean
-    company?: boolean | CompanyArgs
+    creator?: boolean | UserArgs
   }
 
   export type ProjectInclude = {
-    company?: boolean | CompanyArgs
+    creator?: boolean | UserArgs
   }
 
   export type ProjectGetPayload<
@@ -5948,12 +4932,12 @@ export namespace Prisma {
     ?'include' extends U
     ? Project  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'company' ? CompanyGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+        P extends 'creator' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'company' ? CompanyGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Project ? Project[P] : never
+        P extends 'creator' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Project ? Project[P] : never
   } 
     : Project
   : Project
@@ -6328,7 +5312,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    company<T extends CompanyArgs = {}>(args?: Subset<T, CompanyArgs>): CheckSelect<T, Prisma__CompanyClient<Company | Null>, Prisma__CompanyClient<CompanyGetPayload<T> | Null>>;
+    creator<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
 
     private get _document();
     /**
@@ -6711,24 +5695,12 @@ export namespace Prisma {
   export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
-  export const CompanyScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    creatorId: 'creatorId'
-  };
-
-  export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
-
-
   export const ProjectScalarFieldEnum: {
     id: 'id',
     name: 'name',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    creatorId: 'creatorId',
-    companyId: 'companyId'
+    creatorId: 'creatorId'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
@@ -6932,7 +5904,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter | Date | string
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
-    company?: CompanyListRelationFilter
+    projects?: ProjectListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -6945,7 +5917,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
-    company?: CompanyOrderByRelationAggregateInput
+    projects?: ProjectOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -7017,55 +5989,6 @@ export namespace Prisma {
     expires?: DateTimeWithAggregatesFilter | Date | string
   }
 
-  export type CompanyWhereInput = {
-    AND?: Enumerable<CompanyWhereInput>
-    OR?: Enumerable<CompanyWhereInput>
-    NOT?: Enumerable<CompanyWhereInput>
-    id?: StringFilter | string
-    name?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    updatedAt?: DateTimeFilter | Date | string
-    creatorId?: StringFilter | string
-    creator?: XOR<UserRelationFilter, UserWhereInput>
-    projects?: ProjectListRelationFilter
-  }
-
-  export type CompanyOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    creatorId?: SortOrder
-    creator?: UserOrderByWithRelationInput
-    projects?: ProjectOrderByRelationAggregateInput
-  }
-
-  export type CompanyWhereUniqueInput = {
-    id?: string
-  }
-
-  export type CompanyOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    creatorId?: SortOrder
-    _count?: CompanyCountOrderByAggregateInput
-    _max?: CompanyMaxOrderByAggregateInput
-    _min?: CompanyMinOrderByAggregateInput
-  }
-
-  export type CompanyScalarWhereWithAggregatesInput = {
-    AND?: Enumerable<CompanyScalarWhereWithAggregatesInput>
-    OR?: Enumerable<CompanyScalarWhereWithAggregatesInput>
-    NOT?: Enumerable<CompanyScalarWhereWithAggregatesInput>
-    id?: StringWithAggregatesFilter | string
-    name?: StringWithAggregatesFilter | string
-    createdAt?: DateTimeWithAggregatesFilter | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter | Date | string
-    creatorId?: StringWithAggregatesFilter | string
-  }
-
   export type ProjectWhereInput = {
     AND?: Enumerable<ProjectWhereInput>
     OR?: Enumerable<ProjectWhereInput>
@@ -7075,8 +5998,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
-    companyId?: StringFilter | string
-    company?: XOR<CompanyRelationFilter, CompanyWhereInput>
+    creator?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -7085,8 +6007,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-    companyId?: SortOrder
-    company?: CompanyOrderByWithRelationInput
+    creator?: UserOrderByWithRelationInput
   }
 
   export type ProjectWhereUniqueInput = {
@@ -7099,7 +6020,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-    companyId?: SortOrder
     _count?: ProjectCountOrderByAggregateInput
     _max?: ProjectMaxOrderByAggregateInput
     _min?: ProjectMinOrderByAggregateInput
@@ -7114,7 +6034,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
     creatorId?: StringWithAggregatesFilter | string
-    companyId?: StringWithAggregatesFilter | string
   }
 
   export type AccountCreateInput = {
@@ -7293,7 +6212,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    company?: CompanyCreateNestedManyWithoutCreatorInput
+    projects?: ProjectCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7306,7 +6225,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    company?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUpdateInput = {
@@ -7319,7 +6238,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    company?: CompanyUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7332,7 +6251,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    company?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7407,72 +6326,12 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CompanyCreateInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creator: UserCreateNestedOneWithoutCompanyInput
-    projects?: ProjectCreateNestedManyWithoutCompanyInput
-  }
-
-  export type CompanyUncheckedCreateInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creatorId: string
-    projects?: ProjectUncheckedCreateNestedManyWithoutCompanyInput
-  }
-
-  export type CompanyUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneRequiredWithoutCompanyNestedInput
-    projects?: ProjectUpdateManyWithoutCompanyNestedInput
-  }
-
-  export type CompanyUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
-    projects?: ProjectUncheckedUpdateManyWithoutCompanyNestedInput
-  }
-
-  export type CompanyCreateManyInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creatorId: string
-  }
-
-  export type CompanyUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CompanyUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
-  }
-
   export type ProjectCreateInput = {
     id?: string
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    creatorId: string
-    company: CompanyCreateNestedOneWithoutProjectsInput
+    creator: UserCreateNestedOneWithoutProjectsInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -7481,7 +6340,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
-    companyId: string
   }
 
   export type ProjectUpdateInput = {
@@ -7489,8 +6347,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
-    company?: CompanyUpdateOneRequiredWithoutProjectsNestedInput
+    creator?: UserUpdateOneRequiredWithoutProjectsNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -7499,7 +6356,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    companyId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProjectCreateManyInput = {
@@ -7508,7 +6364,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     creatorId: string
-    companyId: string
   }
 
   export type ProjectUpdateManyMutationInput = {
@@ -7516,7 +6371,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProjectUncheckedUpdateManyInput = {
@@ -7525,7 +6379,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     creatorId?: StringFieldUpdateOperationsInput | string
-    companyId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter = {
@@ -7755,10 +6608,10 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
-  export type CompanyListRelationFilter = {
-    every?: CompanyWhereInput
-    some?: CompanyWhereInput
-    none?: CompanyWhereInput
+  export type ProjectListRelationFilter = {
+    every?: ProjectWhereInput
+    some?: ProjectWhereInput
+    none?: ProjectWhereInput
   }
 
   export type AccountOrderByRelationAggregateInput = {
@@ -7769,7 +6622,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type CompanyOrderByRelationAggregateInput = {
+  export type ProjectOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7840,52 +6693,12 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
-  export type ProjectListRelationFilter = {
-    every?: ProjectWhereInput
-    some?: ProjectWhereInput
-    none?: ProjectWhereInput
-  }
-
-  export type ProjectOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CompanyCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    creatorId?: SortOrder
-  }
-
-  export type CompanyMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    creatorId?: SortOrder
-  }
-
-  export type CompanyMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    creatorId?: SortOrder
-  }
-
-  export type CompanyRelationFilter = {
-    is?: CompanyWhereInput
-    isNot?: CompanyWhereInput
-  }
-
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-    companyId?: SortOrder
   }
 
   export type ProjectMaxOrderByAggregateInput = {
@@ -7894,7 +6707,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-    companyId?: SortOrder
   }
 
   export type ProjectMinOrderByAggregateInput = {
@@ -7903,7 +6715,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     creatorId?: SortOrder
-    companyId?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -7968,11 +6779,11 @@ export namespace Prisma {
     connect?: Enumerable<SessionWhereUniqueInput>
   }
 
-  export type CompanyCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<Enumerable<CompanyCreateWithoutCreatorInput>, Enumerable<CompanyUncheckedCreateWithoutCreatorInput>>
-    connectOrCreate?: Enumerable<CompanyCreateOrConnectWithoutCreatorInput>
-    createMany?: CompanyCreateManyCreatorInputEnvelope
-    connect?: Enumerable<CompanyWhereUniqueInput>
+  export type ProjectCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<ProjectCreateWithoutCreatorInput>, Enumerable<ProjectUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCreatorInput>
+    createMany?: ProjectCreateManyCreatorInputEnvelope
+    connect?: Enumerable<ProjectWhereUniqueInput>
   }
 
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
@@ -7989,11 +6800,11 @@ export namespace Prisma {
     connect?: Enumerable<SessionWhereUniqueInput>
   }
 
-  export type CompanyUncheckedCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<Enumerable<CompanyCreateWithoutCreatorInput>, Enumerable<CompanyUncheckedCreateWithoutCreatorInput>>
-    connectOrCreate?: Enumerable<CompanyCreateOrConnectWithoutCreatorInput>
-    createMany?: CompanyCreateManyCreatorInputEnvelope
-    connect?: Enumerable<CompanyWhereUniqueInput>
+  export type ProjectUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<Enumerable<ProjectCreateWithoutCreatorInput>, Enumerable<ProjectUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCreatorInput>
+    createMany?: ProjectCreateManyCreatorInputEnvelope
+    connect?: Enumerable<ProjectWhereUniqueInput>
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -8028,18 +6839,18 @@ export namespace Prisma {
     deleteMany?: Enumerable<SessionScalarWhereInput>
   }
 
-  export type CompanyUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<Enumerable<CompanyCreateWithoutCreatorInput>, Enumerable<CompanyUncheckedCreateWithoutCreatorInput>>
-    connectOrCreate?: Enumerable<CompanyCreateOrConnectWithoutCreatorInput>
-    upsert?: Enumerable<CompanyUpsertWithWhereUniqueWithoutCreatorInput>
-    createMany?: CompanyCreateManyCreatorInputEnvelope
-    set?: Enumerable<CompanyWhereUniqueInput>
-    disconnect?: Enumerable<CompanyWhereUniqueInput>
-    delete?: Enumerable<CompanyWhereUniqueInput>
-    connect?: Enumerable<CompanyWhereUniqueInput>
-    update?: Enumerable<CompanyUpdateWithWhereUniqueWithoutCreatorInput>
-    updateMany?: Enumerable<CompanyUpdateManyWithWhereWithoutCreatorInput>
-    deleteMany?: Enumerable<CompanyScalarWhereInput>
+  export type ProjectUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<ProjectCreateWithoutCreatorInput>, Enumerable<ProjectUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<ProjectUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: ProjectCreateManyCreatorInputEnvelope
+    set?: Enumerable<ProjectWhereUniqueInput>
+    disconnect?: Enumerable<ProjectWhereUniqueInput>
+    delete?: Enumerable<ProjectWhereUniqueInput>
+    connect?: Enumerable<ProjectWhereUniqueInput>
+    update?: Enumerable<ProjectUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<ProjectUpdateManyWithWhereWithoutCreatorInput>
+    deleteMany?: Enumerable<ProjectScalarWhereInput>
   }
 
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
@@ -8070,88 +6881,32 @@ export namespace Prisma {
     deleteMany?: Enumerable<SessionScalarWhereInput>
   }
 
-  export type CompanyUncheckedUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<Enumerable<CompanyCreateWithoutCreatorInput>, Enumerable<CompanyUncheckedCreateWithoutCreatorInput>>
-    connectOrCreate?: Enumerable<CompanyCreateOrConnectWithoutCreatorInput>
-    upsert?: Enumerable<CompanyUpsertWithWhereUniqueWithoutCreatorInput>
-    createMany?: CompanyCreateManyCreatorInputEnvelope
-    set?: Enumerable<CompanyWhereUniqueInput>
-    disconnect?: Enumerable<CompanyWhereUniqueInput>
-    delete?: Enumerable<CompanyWhereUniqueInput>
-    connect?: Enumerable<CompanyWhereUniqueInput>
-    update?: Enumerable<CompanyUpdateWithWhereUniqueWithoutCreatorInput>
-    updateMany?: Enumerable<CompanyUpdateManyWithWhereWithoutCreatorInput>
-    deleteMany?: Enumerable<CompanyScalarWhereInput>
-  }
-
-  export type UserCreateNestedOneWithoutCompanyInput = {
-    create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCompanyInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type ProjectCreateNestedManyWithoutCompanyInput = {
-    create?: XOR<Enumerable<ProjectCreateWithoutCompanyInput>, Enumerable<ProjectUncheckedCreateWithoutCompanyInput>>
-    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCompanyInput>
-    createMany?: ProjectCreateManyCompanyInputEnvelope
-    connect?: Enumerable<ProjectWhereUniqueInput>
-  }
-
-  export type ProjectUncheckedCreateNestedManyWithoutCompanyInput = {
-    create?: XOR<Enumerable<ProjectCreateWithoutCompanyInput>, Enumerable<ProjectUncheckedCreateWithoutCompanyInput>>
-    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCompanyInput>
-    createMany?: ProjectCreateManyCompanyInputEnvelope
-    connect?: Enumerable<ProjectWhereUniqueInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutCompanyNestedInput = {
-    create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCompanyInput
-    upsert?: UserUpsertWithoutCompanyInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutCompanyInput, UserUncheckedUpdateWithoutCompanyInput>
-  }
-
-  export type ProjectUpdateManyWithoutCompanyNestedInput = {
-    create?: XOR<Enumerable<ProjectCreateWithoutCompanyInput>, Enumerable<ProjectUncheckedCreateWithoutCompanyInput>>
-    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCompanyInput>
-    upsert?: Enumerable<ProjectUpsertWithWhereUniqueWithoutCompanyInput>
-    createMany?: ProjectCreateManyCompanyInputEnvelope
+  export type ProjectUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<Enumerable<ProjectCreateWithoutCreatorInput>, Enumerable<ProjectUncheckedCreateWithoutCreatorInput>>
+    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCreatorInput>
+    upsert?: Enumerable<ProjectUpsertWithWhereUniqueWithoutCreatorInput>
+    createMany?: ProjectCreateManyCreatorInputEnvelope
     set?: Enumerable<ProjectWhereUniqueInput>
     disconnect?: Enumerable<ProjectWhereUniqueInput>
     delete?: Enumerable<ProjectWhereUniqueInput>
     connect?: Enumerable<ProjectWhereUniqueInput>
-    update?: Enumerable<ProjectUpdateWithWhereUniqueWithoutCompanyInput>
-    updateMany?: Enumerable<ProjectUpdateManyWithWhereWithoutCompanyInput>
+    update?: Enumerable<ProjectUpdateWithWhereUniqueWithoutCreatorInput>
+    updateMany?: Enumerable<ProjectUpdateManyWithWhereWithoutCreatorInput>
     deleteMany?: Enumerable<ProjectScalarWhereInput>
   }
 
-  export type ProjectUncheckedUpdateManyWithoutCompanyNestedInput = {
-    create?: XOR<Enumerable<ProjectCreateWithoutCompanyInput>, Enumerable<ProjectUncheckedCreateWithoutCompanyInput>>
-    connectOrCreate?: Enumerable<ProjectCreateOrConnectWithoutCompanyInput>
-    upsert?: Enumerable<ProjectUpsertWithWhereUniqueWithoutCompanyInput>
-    createMany?: ProjectCreateManyCompanyInputEnvelope
-    set?: Enumerable<ProjectWhereUniqueInput>
-    disconnect?: Enumerable<ProjectWhereUniqueInput>
-    delete?: Enumerable<ProjectWhereUniqueInput>
-    connect?: Enumerable<ProjectWhereUniqueInput>
-    update?: Enumerable<ProjectUpdateWithWhereUniqueWithoutCompanyInput>
-    updateMany?: Enumerable<ProjectUpdateManyWithWhereWithoutCompanyInput>
-    deleteMany?: Enumerable<ProjectScalarWhereInput>
+  export type UserCreateNestedOneWithoutProjectsInput = {
+    create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
+    connect?: UserWhereUniqueInput
   }
 
-  export type CompanyCreateNestedOneWithoutProjectsInput = {
-    create?: XOR<CompanyCreateWithoutProjectsInput, CompanyUncheckedCreateWithoutProjectsInput>
-    connectOrCreate?: CompanyCreateOrConnectWithoutProjectsInput
-    connect?: CompanyWhereUniqueInput
-  }
-
-  export type CompanyUpdateOneRequiredWithoutProjectsNestedInput = {
-    create?: XOR<CompanyCreateWithoutProjectsInput, CompanyUncheckedCreateWithoutProjectsInput>
-    connectOrCreate?: CompanyCreateOrConnectWithoutProjectsInput
-    upsert?: CompanyUpsertWithoutProjectsInput
-    connect?: CompanyWhereUniqueInput
-    update?: XOR<CompanyUpdateWithoutProjectsInput, CompanyUncheckedUpdateWithoutProjectsInput>
+  export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
+    create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
+    upsert?: UserUpsertWithoutProjectsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
   }
 
   export type NestedStringFilter = {
@@ -8324,7 +7079,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
-    company?: CompanyCreateNestedManyWithoutCreatorInput
+    projects?: ProjectCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -8336,7 +7091,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    company?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -8358,7 +7113,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    company?: CompanyUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -8370,7 +7125,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    company?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -8382,7 +7137,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    company?: CompanyCreateNestedManyWithoutCreatorInput
+    projects?: ProjectCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -8394,7 +7149,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    company?: CompanyUncheckedCreateNestedManyWithoutCreatorInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -8416,7 +7171,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    company?: CompanyUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -8428,7 +7183,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    company?: CompanyUncheckedUpdateManyWithoutCreatorNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -8495,29 +7250,27 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type CompanyCreateWithoutCreatorInput = {
+  export type ProjectCreateWithoutCreatorInput = {
     id?: string
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    projects?: ProjectCreateNestedManyWithoutCompanyInput
   }
 
-  export type CompanyUncheckedCreateWithoutCreatorInput = {
+  export type ProjectUncheckedCreateWithoutCreatorInput = {
     id?: string
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    projects?: ProjectUncheckedCreateNestedManyWithoutCompanyInput
   }
 
-  export type CompanyCreateOrConnectWithoutCreatorInput = {
-    where: CompanyWhereUniqueInput
-    create: XOR<CompanyCreateWithoutCreatorInput, CompanyUncheckedCreateWithoutCreatorInput>
+  export type ProjectCreateOrConnectWithoutCreatorInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutCreatorInput, ProjectUncheckedCreateWithoutCreatorInput>
   }
 
-  export type CompanyCreateManyCreatorInputEnvelope = {
-    data: Enumerable<CompanyCreateManyCreatorInput>
+  export type ProjectCreateManyCreatorInputEnvelope = {
+    data: Enumerable<ProjectCreateManyCreatorInput>
     skipDuplicates?: boolean
   }
 
@@ -8583,129 +7336,18 @@ export namespace Prisma {
     expires?: DateTimeFilter | Date | string
   }
 
-  export type CompanyUpsertWithWhereUniqueWithoutCreatorInput = {
-    where: CompanyWhereUniqueInput
-    update: XOR<CompanyUpdateWithoutCreatorInput, CompanyUncheckedUpdateWithoutCreatorInput>
-    create: XOR<CompanyCreateWithoutCreatorInput, CompanyUncheckedCreateWithoutCreatorInput>
-  }
-
-  export type CompanyUpdateWithWhereUniqueWithoutCreatorInput = {
-    where: CompanyWhereUniqueInput
-    data: XOR<CompanyUpdateWithoutCreatorInput, CompanyUncheckedUpdateWithoutCreatorInput>
-  }
-
-  export type CompanyUpdateManyWithWhereWithoutCreatorInput = {
-    where: CompanyScalarWhereInput
-    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyWithoutCompanyInput>
-  }
-
-  export type CompanyScalarWhereInput = {
-    AND?: Enumerable<CompanyScalarWhereInput>
-    OR?: Enumerable<CompanyScalarWhereInput>
-    NOT?: Enumerable<CompanyScalarWhereInput>
-    id?: StringFilter | string
-    name?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    updatedAt?: DateTimeFilter | Date | string
-    creatorId?: StringFilter | string
-  }
-
-  export type UserCreateWithoutCompanyInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    image?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCompanyInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    image?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCompanyInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
-  }
-
-  export type ProjectCreateWithoutCompanyInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creatorId: string
-  }
-
-  export type ProjectUncheckedCreateWithoutCompanyInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creatorId: string
-  }
-
-  export type ProjectCreateOrConnectWithoutCompanyInput = {
+  export type ProjectUpsertWithWhereUniqueWithoutCreatorInput = {
     where: ProjectWhereUniqueInput
-    create: XOR<ProjectCreateWithoutCompanyInput, ProjectUncheckedCreateWithoutCompanyInput>
+    update: XOR<ProjectUpdateWithoutCreatorInput, ProjectUncheckedUpdateWithoutCreatorInput>
+    create: XOR<ProjectCreateWithoutCreatorInput, ProjectUncheckedCreateWithoutCreatorInput>
   }
 
-  export type ProjectCreateManyCompanyInputEnvelope = {
-    data: Enumerable<ProjectCreateManyCompanyInput>
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithoutCompanyInput = {
-    update: XOR<UserUpdateWithoutCompanyInput, UserUncheckedUpdateWithoutCompanyInput>
-    create: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
-  }
-
-  export type UserUpdateWithoutCompanyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutCompanyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type ProjectUpsertWithWhereUniqueWithoutCompanyInput = {
+  export type ProjectUpdateWithWhereUniqueWithoutCreatorInput = {
     where: ProjectWhereUniqueInput
-    update: XOR<ProjectUpdateWithoutCompanyInput, ProjectUncheckedUpdateWithoutCompanyInput>
-    create: XOR<ProjectCreateWithoutCompanyInput, ProjectUncheckedCreateWithoutCompanyInput>
+    data: XOR<ProjectUpdateWithoutCreatorInput, ProjectUncheckedUpdateWithoutCreatorInput>
   }
 
-  export type ProjectUpdateWithWhereUniqueWithoutCompanyInput = {
-    where: ProjectWhereUniqueInput
-    data: XOR<ProjectUpdateWithoutCompanyInput, ProjectUncheckedUpdateWithoutCompanyInput>
-  }
-
-  export type ProjectUpdateManyWithWhereWithoutCompanyInput = {
+  export type ProjectUpdateManyWithWhereWithoutCreatorInput = {
     where: ProjectScalarWhereInput
     data: XOR<ProjectUpdateManyMutationInput, ProjectUncheckedUpdateManyWithoutProjectsInput>
   }
@@ -8719,49 +7361,64 @@ export namespace Prisma {
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
     creatorId?: StringFilter | string
-    companyId?: StringFilter | string
   }
 
-  export type CompanyCreateWithoutProjectsInput = {
+  export type UserCreateWithoutProjectsInput = {
     id?: string
-    name: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator: UserCreateNestedOneWithoutCompanyInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
-  export type CompanyUncheckedCreateWithoutProjectsInput = {
+  export type UserUncheckedCreateWithoutProjectsInput = {
     id?: string
-    name: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creatorId: string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type CompanyCreateOrConnectWithoutProjectsInput = {
-    where: CompanyWhereUniqueInput
-    create: XOR<CompanyCreateWithoutProjectsInput, CompanyUncheckedCreateWithoutProjectsInput>
+  export type UserCreateOrConnectWithoutProjectsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
   }
 
-  export type CompanyUpsertWithoutProjectsInput = {
-    update: XOR<CompanyUpdateWithoutProjectsInput, CompanyUncheckedUpdateWithoutProjectsInput>
-    create: XOR<CompanyCreateWithoutProjectsInput, CompanyUncheckedCreateWithoutProjectsInput>
+  export type UserUpsertWithoutProjectsInput = {
+    update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
+    create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
   }
 
-  export type CompanyUpdateWithoutProjectsInput = {
+  export type UserUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneRequiredWithoutCompanyNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
-  export type CompanyUncheckedUpdateWithoutProjectsInput = {
+  export type UserUncheckedUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -8786,7 +7443,7 @@ export namespace Prisma {
     expires: Date | string
   }
 
-  export type CompanyCreateManyCreatorInput = {
+  export type ProjectCreateManyCreatorInput = {
     id?: string
     name: string
     createdAt?: Date | string
@@ -8859,51 +7516,18 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CompanyUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    projects?: ProjectUpdateManyWithoutCompanyNestedInput
-  }
-
-  export type CompanyUncheckedUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    projects?: ProjectUncheckedUpdateManyWithoutCompanyNestedInput
-  }
-
-  export type CompanyUncheckedUpdateManyWithoutCompanyInput = {
+  export type ProjectUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectCreateManyCompanyInput = {
-    id?: string
-    name: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    creatorId: string
-  }
-
-  export type ProjectUpdateWithoutCompanyInput = {
+  export type ProjectUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ProjectUncheckedUpdateWithoutCompanyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProjectUncheckedUpdateManyWithoutProjectsInput = {
@@ -8911,7 +7535,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creatorId?: StringFieldUpdateOperationsInput | string
   }
 
 

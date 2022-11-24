@@ -14,6 +14,9 @@ import {
   Settings,
   Trash,
   User,
+  X,
+  ChevronRight,
+  Home,
 } from "lucide-react";
 import type { Icon as LucideIcon } from "lucide-react";
 
@@ -21,6 +24,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   logo: Command,
+  chevronRight: ChevronRight,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   trash: Trash,
@@ -35,4 +39,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
+  close: X,
+
+  home: Home,
 };
