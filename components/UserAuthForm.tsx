@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { userAuthSchema } from '@/lib/validations/auth';
 import { Icons } from '@/components/icons';
 import toast from '@/components/Atoms/Toast';
+import { useRouter } from 'next/router';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -23,6 +24,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(userAuthSchema),
   });
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   async function onSubmit(data: FormData) {
@@ -31,7 +34,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     const signInResult = await signIn('email', {
       email: data.email.toLowerCase(),
       redirect: false,
-      callbackUrl: `${window.location.origin}/dashboard`,
+      callbackUrl: router.query.redirect
+        ? decodeURI(router.query.redirect as string)
+        : `${window.location.origin}/dashboard`,
     });
 
     setIsLoading(false);

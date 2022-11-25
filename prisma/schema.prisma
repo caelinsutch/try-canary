@@ -55,7 +55,9 @@ model User {
   sessions Session[]
   projects     Project[]
   posts        Post[]
-  upvotes      Upvote[]
+  upvotes      PostUpvote[]
+  commentUpvotes CommentUpvote[]
+  comments Comment[]
 
   @@map(name: "users")
 }
@@ -71,6 +73,7 @@ model VerificationToken {
 
 model Project {
       id        String   @id @default(cuid())
+
       name     String
       logo String?
 
@@ -102,14 +105,47 @@ model Post {
       project Project @relation(fields: [projectId], references: [id])
 
       images Image[]
-      upvotes Upvote[]
+      upvotes PostUpvote[]
+      comments Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  creatorId  String
+  postId  String
+  content String
+  parent_id Int?
+
+
+  post Post @relation(fields: [postId], references: [id])
+  creator User @relation(fields: [creatorId], references: [id])
+  Children  Comment[] @relation("Comment_Children")
+  parent    Comment?  @relation("Comment_Children", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  upvotes CommentUpvote[]
+}
+
+model CommentUpvote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  creatorId  String
+  commentId  Int
+
+  creator User @relation(fields: [creatorId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
 }
 
 // Upvote model
-model Upvote {
+model PostUpvote {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @map(name: "updated_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
   creatorId  String
   postId  String
 
@@ -117,6 +153,7 @@ model Upvote {
   post Post @relation(fields: [postId], references: [id])
 
   @@unique([creatorId, postId])
+	@@map("Upvote")
 }
 
 // Image model

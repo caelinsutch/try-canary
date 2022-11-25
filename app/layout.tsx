@@ -9,8 +9,8 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-const RootLayout  =async ({ children }: RootLayoutProps) => {
-    const session = await getSession(headers().get('cookie'));
+const RootLayout = async ({ children }: RootLayoutProps) => {
+  const session = await getSession(headers().get('cookie'));
   return (
     <html
       lang="en"
@@ -18,10 +18,10 @@ const RootLayout  =async ({ children }: RootLayoutProps) => {
     >
       <head />
       <body className="min-h-screen">
-                  <ClientSessionProvider session={session}>
-
-        {children}
-        </ClientSessionProvider></body>
+        <ClientSessionProvider session={session}>
+          {children}
+        </ClientSessionProvider>
+      </body>
       <Toaster position="bottom-right" />
     </html>
   );

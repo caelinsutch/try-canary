@@ -3,6 +3,7 @@ import { Icons } from '@/components/Icons';
 import { UserAccountNav } from '@/components/UserAccountNav';
 import { User } from 'next-auth';
 import { Project } from '@/lib/prisma';
+import { Button } from '../Atoms/Button';
 
 type HeaderProps = {
   user?: Pick<User, 'name' | 'image' | 'email'>;
@@ -37,6 +38,7 @@ export const Header = ({ user, project }: HeaderProps) => (
         </span>
       </Link>
     )}
+    {user ? (
     <UserAccountNav
       user={{
         name: user.name,
@@ -44,5 +46,15 @@ export const Header = ({ user, project }: HeaderProps) => (
         email: user.email,
       }}
     />
+    ) : (
+      <div className='flex align-middle'>
+        <Button variant='ghost'>
+          Login
+        </Button>
+        <Button>
+          Sign Up
+        </Button>
+      </div>
+    )}
   </header>
 );

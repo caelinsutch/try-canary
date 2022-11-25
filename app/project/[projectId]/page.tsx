@@ -4,7 +4,7 @@ import { PostCard } from '@/components/Molecules/PostCard';
 import { FormInput } from '@/components/FormComponents/FormInput';
 import { FormTextArea } from '@/components/FormComponents/FormTextArea';
 import { Button } from '@/components/Atoms/Button';
-import { CreatePost } from './CreatePost';
+import { CreatePostSection } from './CreatePostSection';
 
 const getProject = async (projectId: string) => {
   return db.project.findFirst({
@@ -43,7 +43,7 @@ const ProjectPage = async ({ params: { projectId } }: ProjectPageProps) => {
   return (
     <div>
       <div className="grid grid-cols-4">
-        <CreatePost/>
+        <CreatePostSection projectId={projectId} />
         {posts.length === 0 ? (
           <div className="col-span-3 text-center justify-center items-center flex">
             <h2 className="text-gray-600 font-semibold text-md">
